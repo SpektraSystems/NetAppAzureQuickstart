@@ -138,7 +138,7 @@
                 "provider": "[parameters('NetAppTags').provider]"
             },
             "dependsOn": [
-                "[concat('Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName'))]",
+                "[concat('Microsoft.Storage/storageAccounts/', parameters('jumpStorageAccountName'))]",
                 "[concat('Microsoft.Network/networkInterfaces/', parameters('jumpvmNicName'))]"
             ],
             "properties": {
