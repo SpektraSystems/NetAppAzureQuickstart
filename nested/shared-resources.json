@@ -1,0 +1,213 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "webNsgName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Network Security Group for the Web tier"
+            }
+        },
+        "dataNsgName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Network Security Group for the Data tier"
+            }
+        },
+        "jumpNsgName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Network Security Group for the Jump tier"
+            }
+        },
+        "diagStorageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the diagnostic storage account"
+            }
+        },
+        "storageAccountType": {
+            "type": "string",
+            "metadata": {
+                "description": "Type of storage account to be used"
+            }
+        },
+        "virtualNetworkName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Virtual Network"
+            }
+        },
+        "dataSubnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the subnet for the Data tier"
+            }
+        },
+        "jumpSubnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the subnet for the Jump tier"
+            }
+        },
+        "webSubnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the subnet for the Web tier"
+            }
+        },
+        "addressPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Address prefix used for the Virtual network"
+            }
+        },
+        "webSubnetPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Address prefix used for the Web subnet"
+            }
+        },
+        "dataSubnetPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Address prefix used for the Data subnet"
+            }
+        },
+        "jumpSubnetPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Address prefix used for the Jump subnet"
+            }
+        },
+        "NetAppTags": {
+            "type": "object",
+            "metadata": {
+                "description": "Tags for NetApp"
+            }
+        },
+        "quickstartTags": {
+            "type": "object",
+            "metadata": {
+                "description": "Tags for quick start templates"
+            }
+        }
+    },
+    "variables": {
+        "apiVersion": "2016-09-01"
+    },
+    "resources": [{
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[parameters('webNSGName')]",
+            "apiVersion": "2016-03-30",
+            "location": "[resourceGroup().location]",
+            "comments": " NSG for Web subnet",
+            "tags": {
+                "displayName": "Web NSG",
+                "quickstartName": "[parameters('quickstartTags').name]",
+                "provider": "[parameters('NetAppTags').provider]"
+            },
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[parameters('dataNSGName')]",
+            "apiVersion": "2016-03-30",
+            "location": "[resourceGroup().location]",
+            "comments": " NSG for Data subnet",
+            "tags": {
+                "displayName": "Data NSG",
+                "quickstartName": "[parameters('quickstartTags').name]",
+                "provider": "[parameters('NetAppTags').provider]"
+            },
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[parameters('jumpNSGName')]",
+            "apiVersion": "2016-03-30",
+            "location": "[resourceGroup().location]",
+            "comments": " NSG for Jump subnet",
+            "tags": {
+                "displayName": "Jump NSG",
+                "quickstartName": "[parameters('quickstartTags').name]",
+                "provider": "[parameters('NetAppTags').provider]"
+            },
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[parameters('diagStorageAccountName')]",
+            "apiVersion": "2016-01-01",
+            "location": "[resourceGroup().location]",
+            "comments": "Storage account used to store the Web VM disks",
+            "tags": {
+                "displayName": "Web VM Storage Account",
+                "quickstartName": "[parameters('quickstartTags').name]",
+                "provider": "[parameters('NetAppTags').provider]"
+            },
+            "sku": {
+                "name": "[parameters('storageAccountType')]"
+            },
+            "kind": "Storage",
+            "properties": {
+
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('virtualNetworkName')]",
+            "apiVersion": "2016-03-30",
+            "location": "[resourceGroup().location]",
+            "comments": "Virtual network for overall solution",
+            "tags": {
+                "displayName": "Virtual Network",
+                "quickstartName": "[parameters('quickstartTags').name]",
+                "provider": "[parameters('NetAppTags').provider]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkSecurityGroups/', parameters('webNSGName'))]",
+                "[concat('Microsoft.Network/networkSecurityGroups/', parameters('jumpNsgName'))]",
+                "[concat('Microsoft.Network/networkSecurityGroups/', parameters('dataNsgName'))]"
+            ],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('addressPrefix')]"
+                    ]
+                },
+                "subnets": [{
+                        "name": "[parameters('jumpSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('jumpSubnetPrefix')]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('jumpNsgName'))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "[parameters('webSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('webSubnetPrefix')]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('webNSGName'))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "[parameters('dataSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('dataSubnetPrefix')]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('dataNsgName'))]"
+                            }
+                        }
+                    }
+
+                ]
+            }
+        }
+
+
+    ]
+}

@@ -1,0 +1,194 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sqlVmName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name to be used for the SQL-VM"
+            }
+        },
+        "sqlVmNicName": {
+            "type": "string",
+            "metadata": {
+                "description": "NIC name to be used for SQL-VM"
+            }
+        },
+        "adminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "Admin name to be used for SQL-VM"
+            }
+        },
+        "adminPassword": {
+            "type": "string",
+            "metadata": {
+                "description": "Admin password to be used for SQL-VM"
+            }
+        },
+        "sqlvmPublicIPAddressName": {
+            "type": "string",
+            "metadata": {
+                "description": "Public IP address of SQL-VM"
+            }
+        },
+        "sqlvmDnsName": {
+            "type": "string",
+            "metadata": {
+                "description": "Public IP address of SQL-VM"
+            }
+        },
+
+        "dataNsgName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Network Security Group for the Data tier"
+            }
+        },
+        "diagStorageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the diagnostic storage account"
+            }
+        },
+
+        "vNetId": {
+            "type": "string",
+            "metadata": {
+                "description": "ID of the virtual network"
+            }
+        },
+        "dataSubnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the subnet for the Data tier"
+            }
+        },
+        "sqlVmSize": {
+            "type": "string",
+            "metadata": {
+                "description": "Size of the SQL-VM"
+            }
+        },
+
+        "NetAppTags": {
+            "type": "object",
+            "metadata": {
+                "description": "Tags for NetApp"
+            }
+        },
+        "quickstartTags": {
+            "type": "object",
+            "metadata": {
+                "description": "Tags for quick start templates"
+            }
+        }
+    },
+    "variables": {
+        "vmStorageAccountContainerName": "vhds",
+        "publicIPAddressType": "Dynamic"
+    },
+    "resources": [{
+            "apiVersion": "2016-03-30",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[parameters('sqlVmPublicIPAddressName')]",
+            "location": "[resourceGroup().location]",
+            "comments": "sql-VM Public IP Address",
+            "tags": {
+                "quickstartName": "[parameters('quickstartTags').name]",
+                "provider": "[parameters('NetAppTags').provider]"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
+                "dnsSettings": {
+                    "domainNameLabel": "[parameters('sqlvmDnsName')]"
+                },
+                "idleTimeoutInMinutes": 4
+            }
+        },
+
+        {
+            "apiVersion": "2016-03-30",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[parameters('sqlVmNicName')]",
+            "location": "[resourceGroup().location]",
+            "comments": "OnCommand Server nic name",
+            "tags": {
+                "quickstartName": "[parameters('quickstartTags').name]",
+                "provider": "[parameters('NetAppTags').provider]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIPAddresses/', parameters('sqlvmpublicIPAddressName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [{
+                    "name": "ipconfig1",
+                    "properties": {
+                        "privateIPAllocationMethod": "Dynamic",
+                        "publicIPAddress": {
+                            "id": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('sqlVmpublicIPAddressName'))]"
+                        },
+                        "subnet": {
+                            "id": "[concat(parameters('vnetID'), '/subnets/', parameters('dataSubnetName'))]"
+                        }
+                    }
+                }]
+            }
+        },
+
+        {
+            "apiVersion": "2016-03-30",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('sqlVmName')]",
+            "location": "[resourceGroup().location]",
+            "comments": "OnCommand Manager VM",
+            "tags": {
+                "quickstartName": "[parameters('quickstartTags').name]",
+                "provider": "[parameters('NetAppTags').provider]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName'))]",
+                "[concat('Microsoft.Network/networkInterfaces/', parameters('sqlVmNicName'))]"
+            ],
+            "plan": {
+                "name": "occm-byol",
+                "publisher": "netapp",
+                "product": "netapp-oncommand-cloud-manager"
+            },
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('sqlVmSize')]"
+                },
+                "osProfile": {
+                    "computerName": "[parameters('sqlVmName')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftSQLServer",
+                        "offer": "SQL2014SP2-WS2012R2",
+                        "sku": "Enterprise",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "osdisk",
+                        "vhd": {
+                            "uri": "[concat('http://',parameters('diagStorageAccountName'),'.blob.core.windows.net/',variables('vmStorageAccountContainerName'),'/',variables('OSDiskName'),'.vhd')]"
+                        },
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage"
+                    },
+                    "dataDisks": []
+                },
+                "networkProfile": {
+                    "networkInterfaces": [{
+                        "id": "[resourceId('Microsoft.Network/networkInterfaces',parameters('sqlVmNicName'))]"
+                    }]
+                }
+            }
+        }
+    ]
+
+
+}

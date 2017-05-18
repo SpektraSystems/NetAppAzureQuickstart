@@ -1,0 +1,166 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.1",
+    "parameters": {
+        "adminUserName": {
+            "type": "string",
+            "metadata": {
+                "description": "Admin user name for the VMs"
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Admin password for the VMs (A mix of upper and lower-case characters, digits and symbols)"
+            }
+        },
+        "jumpNsgName": {
+            "type": "string"
+        },
+        "diagStorageAccountName": {
+            "type": "string"
+        },
+        "vnetID": {
+            "type": "string"
+        },
+        "jumpSubnetName": {
+            "type": "string"
+        },
+        "jumpVmName": {
+            "type": "string"
+        },
+        "jumpvmSize": {
+            "type": "string"
+        },
+        "jumpvmNicName": {
+            "type": "string"
+        },
+        "jumpvmPublicIPAddressName": {
+            "type": "string"
+        },
+        "jumpvmDnsName": {
+            "type": "string"
+        },
+        "vmStorageAccountContainerName": {
+            "type": "string"
+        },
+        "NetAppTags": {
+            "type": "object"
+        },
+        "quickstartTags": {
+            "type": "object"
+        }
+    },
+    "variables": {
+        "publicIPAddressType": "Static",
+        "vmStorageAccountContainerName": "vhds"
+    },
+    "resources": [{
+            "apiVersion": "2016-03-30",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[parameters('jumpvmPublicIPAddressName')]",
+            "location": "[resourceGroup().location]",
+            "comments": "jump-VM Public IP Address",
+            "tags": {
+                "quickstartName": "[parameters('quickstartTags').name]",
+                "provider": "[parameters('NetAppTags').provider]"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "[variables('PublicIPAddressType')]",
+                "dnsSettings": {
+                    "domainNameLabel": "[parameters('jumpvmDnsName')]"
+                },
+                "idleTimeoutInMinutes": 4
+            }
+        },
+        {
+            "apiVersion": "2016-03-30",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[parameters('jumpvmNicName')]",
+            "location": "[resourceGroup().location]",
+            "comments": "OnCommand Server nic name",
+            "tags": {
+                "quickstartName": "[parameters('quickstartTags').name]",
+                "provider": "[parameters('NetAppTags').provider]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIPAddresses/', parameters('jumpvmpublicIPAddressName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [{
+                    "name": "ipconfig1",
+                    "properties": {
+                        "privateIPAllocationMethod": "Dynamic",
+                        "publicIPAddress": {
+                            "id": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('jumpvmpublicIPAddressName'))]"
+                        },
+                        "subnet": {
+                            "id": "[concat(parameters('vnetID'), '/subnets/', parameters('jumpSubnetName'))]"
+                        }
+                    }
+                }]
+            }
+        },
+        {
+            "apiVersion": "2016-03-30",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('jumpvmName')]",
+            "location": "[resourceGroup().location]",
+            "comments": "OnCommand Manager VM",
+            "tags": {
+                "quickstartName": "[parameters('quickstartTags').name]",
+                "provider": "[parameters('NetAppTags').provider]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName'))]",
+                "[concat('Microsoft.Network/networkInterfaces/', parameters('jumpvmNicName'))]"
+            ],
+            "plan": {
+                "name": "occm-byol",
+                "publisher": "netapp",
+                "product": "netapp-oncommand-cloud-manager"
+            },
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('jumpvmSize')]"
+                },
+                "osProfile": {
+                    "computerName": "[parameters('jumpvmName')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2012-R2-Datacenter",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "osdisk",
+                        "vhd": {
+                            "uri": "[concat('http://',parameters('diagStorageAccountName'),'.blob.core.windows.net/',variables('vmStorageAccountContainerName'),'/',variables('OSDiskName'),'.vhd')]"
+                        },
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage"
+                    },
+                    "dataDisks": []
+                },
+                "networkProfile": {
+                    "networkInterfaces": [{
+                        "id": "[resourceId('Microsoft.Network/networkInterfaces',parameters('jumpvmNicName'))]"
+                    }]
+                }
+            }
+        }
+
+
+
+    ]
+
+
+
+
+
+
+}
