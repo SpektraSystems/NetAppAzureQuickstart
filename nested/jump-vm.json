@@ -1,6 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.1",
+    "contentVersion": "1.0.0.0",
     "parameters": {
         "adminUserName": {
             "type": "string",
@@ -19,6 +19,18 @@
         },
         "diagStorageAccountName": {
             "type": "string"
+        },
+        "storageAccountType": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the diagnostic storage account"
+            }
+        },
+        "jumpStorageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the diagnostic storage account"
+            }
         },
         "vnetID": {
             "type": "string"
@@ -41,9 +53,6 @@
         "jumpvmDnsName": {
             "type": "string"
         },
-        "vmStorageAccountContainerName": {
-            "type": "string"
-        },
         "NetAppTags": {
             "type": "object"
         },
@@ -53,9 +62,22 @@
     },
     "variables": {
         "publicIPAddressType": "Static",
-        "vmStorageAccountContainerName": "vhds"
+        "vmStorageAccountContainerName": "vhds",
+        "OSDiskName": "jump-vm-osdisk"
     },
-    "resources": [{
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[parameters('jumpStorageAccountName')]",
+            "apiVersion": "2017-06-01",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "[parameters('storageAccountType')]"
+            },
+            "kind": "Storage",
+            "properties": {}
+        },
+        {
             "apiVersion": "2016-03-30",
             "type": "Microsoft.Network/publicIPAddresses",
             "name": "[parameters('jumpvmPublicIPAddressName')]",
@@ -115,11 +137,6 @@
                 "[concat('Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName'))]",
                 "[concat('Microsoft.Network/networkInterfaces/', parameters('jumpvmNicName'))]"
             ],
-            "plan": {
-                "name": "occm-byol",
-                "publisher": "netapp",
-                "product": "netapp-oncommand-cloud-manager"
-            },
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "[parameters('jumpvmSize')]"
@@ -139,7 +156,7 @@
                     "osDisk": {
                         "name": "osdisk",
                         "vhd": {
-                            "uri": "[concat('http://',parameters('diagStorageAccountName'),'.blob.core.windows.net/',variables('vmStorageAccountContainerName'),'/',variables('OSDiskName'),'.vhd')]"
+                            "uri": "[concat('http://',parameters('jumpStorageAccountName'),'.blob.core.windows.net/',variables('vmStorageAccountContainerName'),'/',variables('OSDiskName'),'.vhd')]"
                         },
                         "caching": "ReadWrite",
                         "createOption": "FromImage"

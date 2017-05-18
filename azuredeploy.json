@@ -18,21 +18,20 @@
         "azureADApplicationID": {
             "type": "string",
             "metadata": {
-                "description": "Password for the user of Virtual Machine. Used for onCommandManager."
+                "description": "App ID."
             }
         },
         "azureADApplicationSecret": {
             "type": "securestring",
             "minLength": 12,
             "metadata": {
-                "description": "Password for the user of Virtual Machine. Used for onCommandManager."
+                "description": "App Secret."
             }
         },
         "azureADTenantID": {
-            "type": "securestring",
-            "minLength": 12,
+            "type": "string",
             "metadata": {
-                "description": "Password for the user of Virtual Machine. Used for onCommandManager."
+                "description": "Tenant ID."
             }
         },
         "_artifactsLocation": {
@@ -78,13 +77,17 @@
         "jumpSubnetPrefix": "10.0.3.0/24",
         "OnCommandCloudManagerpublicIPAddressName": "oncommand-cloudmanager-pip",
         "OnCommandCloudManagerDnsName": "[concat('oncommand',uniqueString(resourceGroup().id))]",
-        "OnCommandCloudManagerNicName": "oncommand-cloudmanager-nic",
+        "OnCommandCloudManagerVmNicName": "oncommand-cloudmanager-nic",
         "OnCommandCloudManagerVmName": "oncommand-cloudmanager",
         "OnCommandCloudManagervmSize": "Standard_D1v2",
         "jumpVmName": "jump-vm",
         "sqlVMName": "sql-vm",
-        "jumpNicName": "vm-jump-nic",
-        "sqlNicName": "vm-sql-nic",
+        "jumpVMNicName": "vm-jump-nic",
+        "sqlVMNicName": "vm-sql-nic",
+        "sqlVmSize": "Standard_D2v2",
+        "jumpVmSize": "Standard_D1v2",
+        "jumpVMpublicIPAddressName": "jump-vm-pip",
+        "jumpVMDnsName": "[concat('jumpvm',uniqueString(resourceGroup().id))]",
         "vmStorageAccountContainerName": "vhds",
         "sharedResourcesTemplateFileName": "shared-resources.json",
         "JumpVMTemplateFileName": "jump-vm.json",
@@ -186,6 +189,12 @@
                     "diagStorageAccountName": {
                         "value": "[variables('diagStorageAccountName')]"
                     },
+                    "storageAccountType": {
+                        "value": "[variables('storageAccountType')]"
+                    },
+                    "jumpStorageAccountName": {
+                        "value": "[variables('jumpStorageAccountName')]"
+                    },
                     "vNetId": {
                         "value": "[variables('vNetId')]"
                     },
@@ -194,6 +203,18 @@
                     },
                     "jumpVmName": {
                         "value": "[variables('JumpVmName')]"
+                    },
+                    "jumpVmSize": {
+                        "value": "[variables('jumpVmSize')]"
+                    },
+                    "jumpvmNicName": {
+                        "value": "[variables('jumpvmNicName')]"
+                    },
+                    "jumpvmPublicIPAddressName": {
+                        "value": "[variables('jumpvmPublicIPAddressName')]"
+                    },
+                    "jumpvmDnsName": {
+                        "value": "[variables('jumpvmDnsName')]"
                     },
                     "NetAppTags": {
                         "value": "[variables('jumpSubnetName')]"
@@ -228,14 +249,26 @@
                     "diagStorageAccountName": {
                         "value": "[variables('diagStorageAccountName')]"
                     },
+                    "storageAccountType": {
+                        "value": "[variables('storageAccountType')]"
+                    },
+                    "dataStorageAccountName": {
+                        "value": "[variables('dataStorageAccountName')]"
+                    },
                     "vNetId": {
                         "value": "[variables('vNetId')]"
                     },
-                    "jumpSubnetName": {
-                        "value": "[variables('jumpSubnetName')]"
+                    "dataSubnetName": {
+                        "value": "[variables('dataSubnetName')]"
                     },
-                    "JumpVmName": {
-                        "value": "[variables('JumpVmName')]"
+                    "sqlVmName": {
+                        "value": "[variables('sqlVmName')]"
+                    },
+                    "sqlVmNicName": {
+                        "value": "[variables('sqlVmNicName')]"
+                    },
+                    "sqlVmSize": {
+                        "value": "[variables('sqlVmSize')]"
                     },
                     "NetAppTags": {
                         "value": "[variables('jumpSubnetName')]"
@@ -273,6 +306,9 @@
                     "diagStorageAccountName": {
                         "value": "[variables('diagStorageAccountName')]"
                     },
+                    "storageAccountType": {
+                        "value": "[variables('storageAccountType')]"
+                    },
                     "vNetId": {
                         "value": "[variables('vNetId')]"
                     },
@@ -285,17 +321,14 @@
                     "OnCommandCloudManagervmSize": {
                         "value": "[variables('OnCommandCloudManagervmSize')]"
                     },
-                    "OnCommandCloudManagerNicName": {
-                        "value": "[variables('OnCommandCloudManagerNicName')]"
+                    "OnCommandCloudManagerVmNicName": {
+                        "value": "[variables('OnCommandCloudManagerVmNicName')]"
                     },
                     "OnCommandCloudManagerpublicIPAddressName": {
                         "value": "[variables('OnCommandCloudManagerpublicIPAddressName')]"
                     },
                     "OnCommandCloudManagerDnsName": {
                         "value": "[variables('OnCommandCloudManagerDnsName')]"
-                    },
-                    "vmStorageAccountContainerName": {
-                        "value": "[variables('vmStorageAccountContainerName')]"
                     },
                     "NetAppTags": {
                         "value": "[variables('jumpSubnetName')]"

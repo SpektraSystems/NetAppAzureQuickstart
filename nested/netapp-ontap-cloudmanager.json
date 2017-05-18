@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.1",
+  "contentVersion": "1.0.0.0",
   "parameters": {
     "adminUserName": {
       "type": "string",
@@ -20,6 +20,9 @@
     "diagStorageAccountName": {
       "type": "string"
     },
+    "storageAccountType": {
+      "type": "string"
+    },
     "vnetID": {
       "type": "string"
     },
@@ -32,16 +35,13 @@
     "OnCommandCloudManagervmSize": {
       "type": "string"
     },
-    "OnCommandCloudManagerNicName": {
+    "OnCommandCloudManagerVmNicName": {
       "type": "string"
     },
     "OnCommandCloudManagerpublicIPAddressName": {
       "type": "string"
     },
     "OnCommandCloudManagerDnsName": {
-      "type": "string"
-    },
-    "vmStorageAccountContainerName": {
       "type": "string"
     },
     "NetAppTags":{
@@ -52,11 +52,22 @@
     }
   },
   "variables": {
-    "OSDiskName": "osdiskforwindowssimple",
+    "OSDiskName": "netapp-oncommandmanagervm-osdisk",
     "publicIPAddressType": "Dynamic",
     "vmStorageAccountContainerName": "vhds"
   },
   "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[parameters('webStorageAccountName')]",
+      "apiVersion": "2017-06-01",
+      "location": "[resourceGroup().location]",
+      "sku": {
+                "name": "[parameters('storageAccountType')]"
+      },
+      "kind": "Storage",
+       "properties": {}
+    },
     {
       "apiVersion": "2016-03-30",
       "type": "Microsoft.Network/publicIPAddresses",
@@ -78,7 +89,7 @@
     {
       "apiVersion": "2016-03-30",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[parameters('OnCommandCloudManagerNicName')]",
+      "name": "[parameters('OnCommandCloudManagerVmNicName')]",
       "location": "[resourceGroup().location]",
       "comments": "OnCommand Server nic name",
       "tags": {
@@ -117,7 +128,7 @@
        },
       "dependsOn": [
         "[concat('Microsoft.Storage/storageAccounts/', parameters('webStorageAccountName'))]",
-        "[concat('Microsoft.Network/networkInterfaces/', parameters('OnCommandCloudManagerNicName'))]"
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('OnCommandCloudManagerVmNicName'))]"
       ],
       "plan": {
         "name": "occm-byol",
@@ -154,7 +165,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',parameters('OnCommandCloudManagerNicName'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',parameters('OnCommandCloudManagerVmNicName'))]"
             }
           ]
         }
