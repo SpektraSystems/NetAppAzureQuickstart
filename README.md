@@ -8,3 +8,5 @@
 </a> 
 <br><br>
 NetApp ONTAP Cloud on Azure Quickstart
+
+<img src="https://github.com/Jithin-Varghese/Documentation-Images/blob/master/Screen%20Shot%202017-05-18%20at%209.53.30%20PM.png"/>
