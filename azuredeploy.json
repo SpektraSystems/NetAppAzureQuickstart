@@ -157,10 +157,10 @@
                         "value": "[variables('jumpSubnetPrefix')]"
                     },
                     "NetAppTags": {
-                        "value": "[variables('jumpSubnetName')]"
+                        "value": "[variables('NetAppTags')]"
                     },
                     "quickstartTags": {
-                        "value": "[variables('jumpSubnetName')]"
+                        "value": "[variables('quickstartTags')]"
                     }
                 }
             }
@@ -217,10 +217,10 @@
                         "value": "[variables('jumpvmDnsName')]"
                     },
                     "NetAppTags": {
-                        "value": "[variables('jumpSubnetName')]"
+                        "value": "[variables('NetAppTags')]"
                     },
                     "quickstartTags": {
-                        "value": "[variables('jumpSubnetName')]"
+                        "value": "[variables('quickstartTags')]"
                     }
                 }
             }
@@ -271,10 +271,10 @@
                         "value": "[variables('sqlVmSize')]"
                     },
                     "NetAppTags": {
-                        "value": "[variables('jumpSubnetName')]"
+                        "value": "[variables('NetAppTags')]"
                     },
                     "quickstartTags": {
-                        "value": "[variables('jumpSubnetName')]"
+                        "value": "[variables('quickstartTags')]"
                     }
                 }
             }
@@ -331,10 +331,10 @@
                         "value": "[variables('OnCommandCloudManagerDnsName')]"
                     },
                     "NetAppTags": {
-                        "value": "[variables('jumpSubnetName')]"
+                        "value": "[variables('NetAppTags')]"
                     },
                     "quickstartTags": {
-                        "value": "[variables('jumpSubnetName')]"
+                        "value": "[variables('quickstartTags')]"
                     }
                 }
             }

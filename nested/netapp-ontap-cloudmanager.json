@@ -29,6 +29,9 @@
     "webSubnetName": {
       "type": "string"
     },
+    "webNsgName": {
+      "type": "string"
+    },
     "OnCommandCloudManagerVmName": {
       "type": "string"
     },
