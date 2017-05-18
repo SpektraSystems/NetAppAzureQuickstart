@@ -65,6 +65,10 @@
       "name": "[parameters('webStorageAccountName')]",
       "apiVersion": "2017-06-01",
       "location": "[resourceGroup().location]",
+      "tags": {
+           "quickstartName": "[parameters('quickstartTags').name]",
+           "provider": "[parameters('NetAppTags').provider]"
+      },
       "sku": {
                 "name": "[parameters('storageAccountType')]"
       },
