@@ -79,7 +79,7 @@
         "OnCommandCloudManagerDnsName": "[concat('oncommand',uniqueString(resourceGroup().id))]",
         "OnCommandCloudManagerVmNicName": "oncommand-cloudmanager-nic",
         "OnCommandCloudManagerVmName": "oncommand-cloudmanager",
-        "OnCommandCloudManagervmSize": "Standard_D1v2",
+        "OnCommandCloudManagervmSize": "Standard_D1_v2",
         "jumpVmName": "jump-vm",
         "sqlVMName": "sql-vm",
         "jumpVMNicName": "vm-jump-nic",
