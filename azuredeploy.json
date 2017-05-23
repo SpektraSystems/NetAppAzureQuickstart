@@ -91,7 +91,8 @@
         "vmStorageAccountContainerName": "vhds",
         "sharedResourcesTemplateFileName": "shared-resources.json",
         "JumpVMTemplateFileName": "jump-vm.json",
-        "netAppOntapCloudManagerVMtemplateFileName": "netapp-ontap-cloudmanager.json",
+        "netAppOntapCloudManagerVMTemplateFileName": "netapp-ontap-cloudmanager.json",
+        "sqlCustomScriptTemplateFileName": "sql-netappotc-config.json",
         "sqlVMTemplateFileName": "sql-vm.json",
         "scriptClose": "'",
         "scriptFileName": "installwebagent.sh",
@@ -296,7 +297,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('_artifactslocation'),'nested/', variables('netAppOntapCloudManagerVMtemplateFileName'),parameters('_artifactsLocationSasToken'))]",
+                    "uri": "[concat(parameters('_artifactslocation'),'nested/', variables('netAppOntapCloudManagerVMTemplateFileName'),parameters('_artifactsLocationSasToken'))]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -356,7 +357,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('_artifactslocation'),'scripts/', variables('netAppOntapCloudManagerVMtemplateFileName'),parameters('_artifactsLocationSasToken'))]",
+                    "uri": "[concat(parameters('_artifactslocation'),'scripts/', variables('sqlCustomScriptTemplateFileName'),parameters('_artifactsLocationSasToken'))]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
