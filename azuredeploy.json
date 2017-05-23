@@ -350,12 +350,12 @@
             }
         },
         {
-            "name": "netapp-powershell-toolkit",
+            "name": "sql-netappotc-config",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-09-01",
             "comments": "",
             "dependsOn": [
-                "['Microsoft.Resources/deployments/shared-resources']"
+                "['Microsoft.Resources/deployments/sql-vm']"
             ],
             "properties": {
                 "mode": "Incremental",
