@@ -307,7 +307,7 @@
                         "value": "[parameters('adminPassword')]"
                     },
                     "webNsgName": {
-                        "value": "[variables('jumpNsgName')]"
+                        "value": "[variables('webNsgName')]"
                     },
                     "webStorageAccountName": {
                         "value": "[variables('webStorageAccountName')]"
@@ -338,6 +338,36 @@
                     },
                     "OnCommandCloudManagerDnsName": {
                         "value": "[variables('OnCommandCloudManagerDnsName')]"
+                    },
+                    "NetAppTags": {
+                        "value": "[variables('NetAppTags')]"
+                    },
+                    "quickstartTags": {
+                        "value": "[variables('quickstartTags')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "netapp-powershell-toolkit",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "comments": "",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('_artifactslocation'),'scripts/', variables('netAppOntapCloudManagerVMtemplateFileName'),parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "_artifactsLocation": {
+                        "value": "[parameters('_artifactsLocation')]"
+                    },
+                    "_artifactsLocationSasToken": {
+                        "value": "[parameters('_artifactsLocationSasToken')]"
+                    },
+                    "sqlVmName": {
+                        "value": "[variables('sqlVmName')]"
                     },
                     "NetAppTags": {
                         "value": "[variables('NetAppTags')]"
