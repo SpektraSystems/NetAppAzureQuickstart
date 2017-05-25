@@ -107,7 +107,22 @@
                 "quickstartName": "[parameters('quickstartTags').name]",
                 "provider": "[parameters('NetAppTags').provider]"
             },
-            "properties": {}
+            "properties": {
+                "securityRules": [{
+                    "name": "httpRule",
+                    "properties": {
+                        "description": "Allow HTTP",
+                        "protocol": "Tcp",
+                        "sourcePortRange": "*",
+                        "destinationPortRange": "80",
+                        "sourceAddressPrefix": "Internet",
+                        "destinationAddressPrefix": "[parameters('webSubnetPrefix')]",
+                        "access": "Allow",
+                        "priority": 100,
+                        "direction": "Inbound"
+                    }
+                }]
+            }
         },
         {
             "type": "Microsoft.Network/networkSecurityGroups",
@@ -133,7 +148,22 @@
                 "quickstartName": "[parameters('quickstartTags').name]",
                 "provider": "[parameters('NetAppTags').provider]"
             },
-            "properties": {}
+            "properties": {
+                "securityRules": [{
+                    "name": "rdpRule",
+                    "properties": {
+                        "description": "Allow RDP",
+                        "protocol": "Tcp",
+                        "sourcePortRange": "*",
+                        "destinationPortRange": "3389",
+                        "sourceAddressPrefix": "Internet",
+                        "destinationAddressPrefix": "[parameters('jumpSubnetPrefix')]",
+                        "access": "Allow",
+                        "priority": 100,
+                        "direction": "Inbound"
+                    }
+                }]
+            }
         },
         {
             "type": "Microsoft.Storage/storageAccounts",
