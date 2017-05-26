@@ -433,7 +433,13 @@
                     },
                     "netappOntapCloudLicense": {
                         "value": "[variables(concat('netappOntapCloudLicense',parameters('netappOntapCloudLicenseType')))]"
-                    },           
+                    },   
+                    "_artifactsLocation": {
+                        "value": "[parameters('_artifactsLocation')]"
+                    },
+                    "_artifactsLocationSasToken": {
+                        "value": "[parameters('_artifactsLocationSasToken')]"
+                    },        
                     "NetAppTags": {
                         "value": "[variables('NetAppTags')]"
                     },
