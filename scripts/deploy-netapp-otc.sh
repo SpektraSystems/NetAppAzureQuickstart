@@ -26,6 +26,26 @@ QuickstartProviderTagName=17
 QuickstartProviderTagValue=18
 otcName=azureqsotc
 
+echo $region
+echo $adminEmail
+echo $adminPassword
+echo $subscriptionId
+echo $azureTenantId
+echo $applicationId
+echo $applicationKey
+echo $vnetID
+echo $cidr
+echo $subnetID
+echo $nsgID
+echo $licenseType
+echo $instanceType
+echo $storageType
+echo $QuickstartNameTagName
+echo $QuickstartNameTagValue
+echo $QuickstartProviderTagName
+echo $QuickstartProviderTagValue
+echo $otcName=azureqsotc
+
 
 ##Fixed Values##
 tenantName="azurenetappqs_tenant"
