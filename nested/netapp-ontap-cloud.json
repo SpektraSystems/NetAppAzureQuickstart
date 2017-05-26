@@ -50,7 +50,7 @@
     },
     "variables": {
         "deployOTCScriptName" : "deploy-netapp-otc.sh",
-        "customScriptCommand" : "sudo sh",
+        "customScriptCommand" : "su - c'sh",
         "subscriptionId" : "[subscription().subscriptionId]",
         "azureADTenantID" : "[subscription().tenantId]",
         "subnetID": "[concat(parameters('vnetID'), '/subnets/', parameters('dataSubnetName'))]",
@@ -78,7 +78,7 @@
                 "fileUris": [
                     "[concat(parameters('_artifactsLocation'),'/scripts/',variables('deployOTCScriptName'),parameters('_artifactsLocationSasToken'))]"
                 ],
-             "commandToExecute": "[concat(variables('customScriptCommand'), variables('deployOTCScriptName'), parameters('deploymentRegion'),' ',parameters('adminEmailAddress'),' ',parameters('adminPassword'),' ',variables('subscriptionId'),' ',variables('azureADTenantID'),' ',parameters('azureADApplicationID'),' ',parameters('azureADApplicationSecret'),' ',parameters('vnetID'),' ',parameters('cidr'),' ',variables('subnetID'),' ',variables('nsgID'),' ',variables('netappOntapCloudLicenseType'),' ',variables('netappOntapCloudInstanceType'),' ',variables('netappOntapCloudStorageType'),' ',variables('scriptClose'))]"     
+             "commandToExecute": "[concat(variables('customScriptCommand'),' ',variables('deployOTCScriptName'),' ',parameters('deploymentRegion'),' ',parameters('adminEmailAddress'),' ',parameters('adminPassword'),' ',variables('subscriptionId'),' ',variables('azureADTenantID'),' ',parameters('azureADApplicationID'),' ',parameters('azureADApplicationSecret'),' ',parameters('vnetID'),' ',parameters('cidr'),' ',variables('subnetID'),' ',variables('nsgID'),' ',variables('netappOntapCloudLicenseType'),' ',variables('netappOntapCloudInstanceType'),' ',variables('netappOntapCloudStorageType'),' ',variables('scriptClose'))]"     
           }
         }
     }
