@@ -78,8 +78,8 @@
                 "fileUris": [
                     "[concat(parameters('_artifactsLocation'),'/scripts/',variables('deployOTCScriptName'),parameters('_artifactsLocationSasToken'))]"
                 ],
+             "commandToExecute": "[concat(variables('customScriptCommand'), variables('deployOTCScriptName'), parameters('deploymentRegion'),' ',parameters('adminEmailAddress'),' ',parameters('adminPassword'),' ',variables('subscriptionId'),' ',variables('azureADTenantID'),' ',parameters('azureADApplicationID'),' ',parameters('azureADApplicationSecret'),' ',parameters('vnetID'),' ',parameters('cidr'),' ',variables('subnetID'),' ',variables('nsgID'),' ',variables('netappOntapCloudLicenseType'),' ',variables('netappOntapCloudInstanceType'),' ',variables('netappOntapCloudStorageType'),' ',variables('scriptClose'))]",
              "protectedSettings": {
-                 "commandToExecute": "[concat(variables('customScriptCommand'), variables('deployOTCScriptName'), parameters('deploymentRegion'),' ',parameters('adminEmailAddress'),' ',parameters('adminPassword'),' ',variables('subscriptionId'),' ',variables('azureADTenantID'),' ',parameters('azureADApplicationID'),' ',parameters('azureADApplicationSecret'),' ',parameters('vnetID'),' ',parameters('cidr'),' ',variables('subnetID'),' ',variables('nsgID'),' ',variables('netappOntapCloudLicenseType'),' ',variables('netappOntapCloudInstanceType'),' ',variables('netappOntapCloudStorageType'),' ',variables('scriptClose'))]"
             }      
           }
         }
