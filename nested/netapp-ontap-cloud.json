@@ -50,7 +50,7 @@
     },
     "variables": {
         "deployOTCScriptName" : "deploy-netapp-otc.sh",
-        "customScriptCommand" : "su - c'sh",
+        "customScriptCommand" : "su -c'sh ",
         "subscriptionId" : "[subscription().subscriptionId]",
         "azureADTenantID" : "[subscription().tenantId]",
         "subnetID": "[concat(parameters('vnetID'), '/subnets/', parameters('dataSubnetName'))]",
