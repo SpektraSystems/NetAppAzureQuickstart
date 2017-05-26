@@ -61,7 +61,7 @@
         "scriptClose": "'"
     },
     "resources": [{
-        "type": "extensions",
+        "type": "Microsoft.Compute/virtualMachines/extensions",
         "name": "[concat(parameters('OnCommandCloudManagerVmName'),'/','deployOntapCloud')]",
         "apiVersion": "2016-03-30",
         "location": "[parameters('deploymentRegion')]",
