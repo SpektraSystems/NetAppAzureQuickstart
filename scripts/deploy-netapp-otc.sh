@@ -67,7 +67,7 @@ tenantId=`sudo curl http://localhost/occm/api/tenants -X GET --header 'Content-T
 curl http://localhost/occm/api/azure/vsa/working-environments -X POST --cookie cookies.txt --header 'Content-Type:application/json' --header 'Referer:AzureQS' --data '{ "name": "'$otcName'", "svmPassword": "'$svmPassword'",  "vnetId": "'$vnetID'",   "cidr": "'$cidr'",   "description": "", "vsaMetadata": { "ontapVersion": "'$ontapVersion'", "licenseType": "'$licenseType'", "instanceType": "'$instanceType'" }, "volume": { "name": "'$sqlvolname'", "size": { "size": "'$sqlvolsize'", "unit": "'$unit'" }, "snapshotPolicyName": "'$snapshotPolicyName'", "exportPolicyInfo": { "policyType": "custom", "ips": ['$cidr'] }, "enableThinProvisioning": "'true'", "enableCompression": "false", "enableDeduplication": "false" }, "region": "'$region'", "tenantId": "'$tenantId'", "subnetId":"'$subnetID'", "dataEncryptionType":"NONE", "ontapEncryptionParameters": null, "securityGroupId":"'$nsgID'", "skipSnapshots": "false", "diskSize": { "size": "1","unit": "TB" }, "storageType": "'$storageType'", "azureTags": [ { "tagKey": "'$QuickstartNameTagName'", "tagKey": "'$QuickstartNameTagValue'"}, { "tagKey": "'$QuickstartProviderTagName'", "tagKey": "'$QuickstartProviderTagValue'"} ],"writingSpeedState": "NORMAL" }' > /tmp/createnetappotc.txt
 OtcPublicId=`cat /tmp/createnetappotc.txt| jq -r .publicId`
 if [ ${OtcPublicId} = null ] ; then
-  message=`cat /tmp/createVSA.txt| jq -r .message`
+  message=`cat /tmp/createnetappotc.txt| jq -r .message`
   echo "OCCM setup failed: $message" > /tmp/occmError.txt
   exit 1
 fi
