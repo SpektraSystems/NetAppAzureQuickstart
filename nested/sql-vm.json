@@ -2,83 +2,44 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "deploymentRegion": {
+            "type": "string"
+        },
         "sqlVmName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name to be used for the SQL-VM"
-            }
+            "type": "string"
         },
         "sqlVmNicName": {
-            "type": "string",
-            "metadata": {
-                "description": "NIC name to be used for SQL-VM"
-            }
+            "type": "string"
         },
         "adminUsername": {
-            "type": "string",
-            "metadata": {
-                "description": "Admin name to be used for SQL-VM"
-            }
+            "type": "string"
         },
         "adminPassword": {
-            "type": "string",
-            "metadata": {
-                "description": "Admin password to be used for SQL-VM"
-            }
-        },
-        "dataNsgName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the Network Security Group for the Data tier"
-            }
+            "type": "string"
         },
         "diagStorageAccountName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the diagnostic storage account"
-            }
+            "type": "string"
         },
         "storageAccountType": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the diagnostic storage account"
-            }
+            "type": "string"
         },
         "dataStorageAccountName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the diagnostic storage account"
-            }
+            "type": "string"
         },
         "vNetId": {
-            "type": "string",
-            "metadata": {
-                "description": "ID of the virtual network"
-            }
+            "type": "string"
         },
         "dataSubnetName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the subnet for the Data tier"
-            }
+            "type": "string"
         },
         "sqlVmSize": {
-            "type": "string",
-            "metadata": {
-                "description": "Size of the SQL-VM"
-            }
+            "type": "string"
         },
         "NetAppTags": {
-            "type": "object",
-            "metadata": {
-                "description": "Tags for NetApp"
-            }
+            "type": "object"
         },
         "quickstartTags": {
-            "type": "object",
-            "metadata": {
-                "description": "Tags for quick start templates"
-            }
+            "type": "object"
         }
     },
     "variables": {
@@ -91,7 +52,7 @@
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[parameters('dataStorageAccountName')]",
             "apiVersion": "2017-06-01",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('deploymentRegion')]",
             "tags": {
                 "quickstartName": "[parameters('quickstartTags').name]",
                 "provider": "[parameters('NetAppTags').provider]"
@@ -106,7 +67,7 @@
             "apiVersion": "2016-03-30",
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[parameters('sqlVmNicName')]",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('deploymentRegion')]",
             "comments": "OnCommand Server nic name",
             "tags": {
                 "quickstartName": "[parameters('quickstartTags').name]",
@@ -129,7 +90,7 @@
             "apiVersion": "2016-03-30",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[parameters('sqlVmName')]",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('deploymentRegion')]",
             "comments": "OnCommand Manager VM",
             "tags": {
                 "quickstartName": "[parameters('quickstartTags').name]",
@@ -173,6 +134,4 @@
             }
         }
     ]
-
-
 }

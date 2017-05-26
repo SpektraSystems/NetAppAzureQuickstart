@@ -2,35 +2,23 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "deploymentRegion": {
+            "type": "string"
+        },
         "adminUserName": {
-            "type": "string",
-            "metadata": {
-                "description": "Admin user name for the VMs"
-            }
+            "type": "string"
         },
         "adminPassword": {
-            "type": "securestring",
-            "metadata": {
-                "description": "Admin password for the VMs (A mix of upper and lower-case characters, digits and symbols)"
-            }
-        },
-        "jumpNsgName": {
-            "type": "string"
+            "type": "securestring"
         },
         "diagStorageAccountName": {
             "type": "string"
         },
         "storageAccountType": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the diagnostic storage account"
-            }
+            "type": "string"
         },
         "jumpStorageAccountName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the diagnostic storage account"
-            }
+            "type": "string"
         },
         "vnetID": {
             "type": "string"
@@ -70,7 +58,7 @@
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[parameters('jumpStorageAccountName')]",
             "apiVersion": "2017-06-01",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('deploymentRegion')]",
             "tags": {
                 "quickstartName": "[parameters('quickstartTags').name]",
                 "provider": "[parameters('NetAppTags').provider]"
@@ -85,7 +73,7 @@
             "apiVersion": "2016-03-30",
             "type": "Microsoft.Network/publicIPAddresses",
             "name": "[parameters('jumpvmPublicIPAddressName')]",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('deploymentRegion')]",
             "comments": "jump-VM Public IP Address",
             "tags": {
                 "quickstartName": "[parameters('quickstartTags').name]",
@@ -103,7 +91,7 @@
             "apiVersion": "2016-03-30",
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[parameters('jumpvmNicName')]",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('deploymentRegion')]",
             "comments": "OnCommand Server nic name",
             "tags": {
                 "quickstartName": "[parameters('quickstartTags').name]",
@@ -132,7 +120,7 @@
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[parameters('jumpvmName')]",
             "location": "[resourceGroup().location]",
-            "comments": "OnCommand Manager VM",
+            "location": "[parameters('deploymentRegion')]",
             "tags": {
                 "quickstartName": "[parameters('quickstartTags').name]",
                 "provider": "[parameters('NetAppTags').provider]"
@@ -174,14 +162,5 @@
                 }
             }
         }
-
-
-
     ]
-
-
-
-
-
-
 }

@@ -2,6 +2,9 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "deploymentRegion": {
+            "type": "string"
+        },
         "_artifactsLocation": {
             "type": "string"
         },
@@ -23,12 +26,11 @@
         "type": "Microsoft.Compute/virtualMachines/extensions",
         "name": "[concat(parameters('sqlVmName'),'/','sqlNetAppOTCConfig')]",
         "apiVersion": "2016-03-30",
-        "location": "[resourceGroup().location]",
+        "location": "[parameters('deploymentRegion')]",
         "tags": {
             "quickstartName": "[parameters('quickstartTags').name]",
             "provider": "[parameters('NetAppTags').provider]"
         },
-
         "properties": {
             "publisher": "Microsoft.Compute",
             "type": "CustomScriptExtension",

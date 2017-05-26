@@ -1,0 +1,88 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deploymentRegion": {
+            "type": "string"
+        },
+        "adminEmailAddress": {
+            "type": "string"
+        },
+        "adminPassword": {
+            "type": "securestring"
+        },
+        "dataNsgName": {
+            "type": "string"
+        },
+        "vNetId": {
+            "type": "string"
+        },
+        "cidr": {
+            "type": "string"
+        },
+        "dataSubnetName": {
+            "type": "string"
+        },
+        "OnCommandCloudManagerVmName": {
+            "type": "string"
+        },
+        "azureADApplicationID": {
+            "type": "string"
+        },
+        "azureADApplicationSecret": {
+            "type": "string"
+        },
+        "netappOntapCloudLicense": {
+            "type": "object"
+        },
+        "_artifactsLocation": {
+            "type": "string"
+        },
+        "_artifactsLocationSasToken": {
+            "type": "securestring"
+        },
+        "NetAppTags": {
+            "type": "object"
+        },
+        "quickstartTags": {
+            "type": "object"
+        }
+    },
+    "variables": {
+        "deployOTCScriptName" : "deploy-netapp-otc.sh",
+        "customScriptCommand" : "sudo sh",
+        "subscriptionId" : "[subscription().subscriptionId]",
+        "azureADTenantID" : "[subscription().tenantId]",
+        "subnetID": "[concat(parameters('vnetID'), '/subnets/', parameters('dataSubnetName'))]",
+        "nsgID": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('dataNSGName'))]",
+        "netappOntapCloudLicenseType" : "[parameters('netappOntapCloudLicense').licenseType]",
+        "netappOntapCloudInstanceType" : "[parameters('netappOntapCloudLicense').instanceType]",
+        "netappOntapCloudStorageType" : "[parameters('netappOntapCloudLicense').storageType]",
+        "scriptClose": "'"
+    },
+    "resources": [{
+        "type": "extensions",
+        "name": "[concat(parameters('OnCommandCloudManagerVmName'),'/','deployOntapCloud')]",
+        "apiVersion": "2016-03-30",
+        "location": "[parameters('deploymentRegion')]",
+        "tags": {
+            "quickstartName": "[parameters('quickstartTags').name]",
+            "provider": "[parameters('NetAppTags').provider]"
+        },
+        "properties": {
+            "publisher": "Microsoft.Azure.Extensions",
+            "type": "CustomScript",
+            "typeHandlerVersion": "2.0",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+                "fileUris": [
+                    "[concat(parameters('_artifactsLocation'),'/scripts/',variables('deployOTCScriptName'),parameters('_artifactsLocationSasToken'))]"
+                ],
+             "protectedSettings": {
+                 "commandToExecute": "[concat(variables('customScriptCommand'), variables('deployOTCScriptName'), parameters('deploymentRegion'),' ',parameters('adminEmailAddress'),' ',parameters('adminPassword'),' ',variables('subscriptionId'),' ',variables('azureADTenantID'),' ',parameters('azureADApplicationID'),' ',parameters('azureADApplicationSecret'),' ',parameters('vnetID'),' ',parameters('cidr'),' ',variables('subnetID'),' ',variables('nsgID'),' ',variables('netappOntapCloudLicenseType'),' ',variables('netappOntapCloudInstanceType'),' ',variables('netappOntapCloudStorageType'),' ',variables('scriptClose'))]"
+            }      
+          }
+        }
+    }
+]
+}

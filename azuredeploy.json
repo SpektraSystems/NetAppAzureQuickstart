@@ -2,15 +2,41 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "deploymentRegion": {
+            "type": "string",
+            "allowedValues": [
+                "eastus",
+                "westus"
+            ],
+            "metadata": {
+                "description": "Azure Region to deploy resources to. "
+            }
+        },
         "adminUsername": {
             "type": "string",
             "metadata": {
                 "description": "User name for onCommandManager VM OS Login"
             }
         },
+        "adminEmailAddress": {
+            "type": "string",
+            "metadata": {
+                "description": "Admin Email Address, used by NetApp OnCommand Manager Login"
+            }
+        },
         "adminPassword": {
             "type": "securestring",
             "minLength": 12,
+            "metadata": {
+                "description": "Password for the user of Virtual Machine. Used for onCommandManager."
+            }
+        },
+        "netappOntapCloudLicenseType": {
+            "type": "string",
+            "allowedValues": [
+                "Standard",
+                "Premium"
+            ],
             "metadata": {
                 "description": "Password for the user of Virtual Machine. Used for onCommandManager."
             }
@@ -26,12 +52,6 @@
             "minLength": 12,
             "metadata": {
                 "description": "App Secret."
-            }
-        },
-        "azureADTenantID": {
-            "type": "string",
-            "metadata": {
-                "description": "Tenant ID."
             }
         },
         "_artifactsLocation": {
@@ -59,8 +79,8 @@
     },
     "variables": {
         "webNsgName": "web-nsg",
-        "dataNsgName": "data-agent-nsg",
-        "jumpNsgName": "jump-agent-nsg",
+        "dataNsgName": "data-nsg",
+        "jumpNsgName": "jump-nsg",
         "webStorageAccountName": "[concat('webst',uniqueString(resourceGroup().id))]",
         "dataStorageAccountName": "[concat('datast',uniqueString(resourceGroup().id))]",
         "jumpStorageAccountName": "[concat('jumpst',uniqueString(resourceGroup().id))]",
@@ -68,8 +88,8 @@
         "storageAccountType": "Standard_GRS",
         "virtualNetworkName": "netapp-vnet",
         "vNetId": "[resourceId(concat('Microsoft.Network','/','virtualNetworks'),variables('virtualNetworkName'))]",
-        "dataSubnetName": "data-agent-subnet",
-        "jumpSubnetName": "jump-agent-subnet",
+        "dataSubnetName": "data-subnet",
+        "jumpSubnetName": "jump-subnet",
         "webSubnetName": "web-subnet",
         "addressPrefix": "10.0.0.0/16",
         "webSubnetPrefix": "10.0.1.0/24",
@@ -88,15 +108,26 @@
         "jumpVmSize": "Standard_D1",
         "jumpVMpublicIPAddressName": "jump-vm-pip",
         "jumpVMDnsName": "[concat('jumpvm',uniqueString(resourceGroup().id))]",
-        "vmStorageAccountContainerName": "vhds",
         "sharedResourcesTemplateFileName": "shared-resources.json",
         "JumpVMTemplateFileName": "jump-vm.json",
-        "netAppOntapCloudManagerVMTemplateFileName": "netapp-ontap-cloudmanager.json",
+        "netAppOnCommandCloudManagerVMTemplateFileName": "netapp-oncommand-cloudmanager.json",
+        "netAppOntapCloudTemplateFileName": "netapp-ontap-cloud.json",
         "sqlCustomScriptTemplateFileName": "sql-netappotc-config.json",
         "sqlVMTemplateFileName": "sql-vm.json",
-        "scriptClose": "'",
-        "scriptFileName": "installwebagent.sh",
-        "scriptStart": "su -c'sh ",
+        "netappOntapCloudLicenseStandard":
+            {
+                "type": "object",
+                "licenseType" : "Standard",
+                "instanceType" : "Standard_DS4_v2",
+                "storageType": "Standard_LRS"
+            },
+        "netappOntapCloudLicensePremium":
+            {
+                "type": "object",
+                "licenseType" : "Premium",
+                "instanceType" : "Standard_DS5_v2",
+                "storageType": "Premium_LRS"
+            },        
         "NetAppTags": {
             "type": "object",
             "provider": "IDToBeDetermined"
@@ -118,6 +149,9 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
+                    "deploymentRegion": {
+                        "value": "[parameters('deploymentRegion')]"
+                    },
                     "webNsgName": {
                         "value": "[variables('webNsgName')]"
                     },
@@ -157,6 +191,9 @@
                     "jumpSubnetPrefix": {
                         "value": "[variables('jumpSubnetPrefix')]"
                     },
+                    "remoteAllowedCIDR": {
+                        "value": "[parameters('remoteAllowedCIDR')]"
+                    },
                     "NetAppTags": {
                         "value": "[variables('NetAppTags')]"
                     },
@@ -181,14 +218,14 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
+                    "deploymentRegion": {
+                        "value": "[parameters('deploymentRegion')]"
+                    },
                     "adminUsername": {
                         "value": "[parameters('adminUsername')]"
                     },
                     "adminPassword": {
                         "value": "[parameters('adminPassword')]"
-                    },
-                    "jumpNsgName": {
-                        "value": "[variables('jumpNsgName')]"
                     },
                     "diagStorageAccountName": {
                         "value": "[variables('diagStorageAccountName')]"
@@ -244,14 +281,14 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
+                    "deploymentRegion": {
+                        "value": "[parameters('deploymentRegion')]"
+                    },
                     "adminUsername": {
                         "value": "[parameters('adminUsername')]"
                     },
                     "adminPassword": {
                         "value": "[parameters('adminPassword')]"
-                    },
-                    "dataNsgName": {
-                        "value": "[variables('jumpNsgName')]"
                     },
                     "diagStorageAccountName": {
                         "value": "[variables('diagStorageAccountName')]"
@@ -287,7 +324,7 @@
             }
         },
         {
-            "name": "netapp-ontap-cloudmanager-vm",
+            "name": "netapp-oncommand-cloudmanager",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-09-01",
             "comments": "Azure Resources that are shared within the infrastructure environment",
@@ -297,18 +334,18 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('_artifactslocation'),'/nested/', variables('netAppOntapCloudManagerVMTemplateFileName'),parameters('_artifactsLocationSasToken'))]",
+                    "uri": "[concat(parameters('_artifactslocation'),'/nested/', variables('netAppOnCommandCloudManagerVMTemplateFileName'),parameters('_artifactsLocationSasToken'))]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
+                    "deploymentRegion": {
+                        "value": "[parameters('deploymentRegion')]"
+                    },
                     "adminUsername": {
                         "value": "[parameters('adminUsername')]"
                     },
                     "adminPassword": {
                         "value": "[parameters('adminPassword')]"
-                    },
-                    "webNsgName": {
-                        "value": "[variables('webNsgName')]"
                     },
                     "webStorageAccountName": {
                         "value": "[variables('webStorageAccountName')]"
@@ -350,6 +387,63 @@
             }
         },
         {
+            "name": "netapp-ontap-cloud",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "comments": "NetApp ONTAP Cloud Env Deployment",
+            "dependsOn": [
+                "['Microsoft.Resources/deployments/netapp-ontap-cloudmanager-vm']"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('_artifactslocation'),'/nested/', variables('netAppOntapCloudTemplateFileName'),parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "deploymentRegion": {
+                        "value": "[parameters('deploymentRegion')]"
+                    },
+                    "adminEmailAddress": {
+                        "value": "[parameters('adminEmailAddress')]"
+                    },
+                    "adminPassword": {
+                        "value": "[parameters('adminPassword')]"
+                    },
+                    "dataNsgName": {
+                        "value": "[variables('dataNsgName')]"
+                    },
+                    "vNetId": {
+                        "value": "[variables('vNetId')]"
+                    },
+                    "cidr": {
+                        "value": "[variables('AddressPrefix')]"
+                    },
+                    "dataSubnetName": {
+                        "value": "[variables('dataSubnetName')]"
+                    },
+                    "OnCommandCloudManagerVmName": {
+                        "value": "[variables('OnCommandCloudManagerVmName')]"
+                    },
+                    "azureADApplicationID": {
+                        "value": "[parameters('azureADApplicationID')]"
+                    },
+                    "azureADApplicationSecret": {
+                        "value": "[parameters('azureADApplicationSecret')]"
+                    },
+                    "netappOntapCloudLicense": {
+                        "value": "[variables(concat('netappOntapCloudLicense',parameters('netappOntapCloudLicenseType')))]"
+                    },           
+                    "NetAppTags": {
+                        "value": "[variables('NetAppTags')]"
+                    },
+                    "quickstartTags": {
+                        "value": "[variables('quickstartTags')]"
+                    }
+                }
+            }
+        },
+        {
             "name": "sql-netappotc-config",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-09-01",
@@ -364,6 +458,9 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
+                    "deploymentRegion": {
+                        "value": "[parameters('deploymentRegion')]"
+                    },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
                     },
