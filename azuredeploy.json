@@ -392,7 +392,7 @@
             "apiVersion": "2016-09-01",
             "comments": "NetApp ONTAP Cloud Env Deployment",
             "dependsOn": [
-                "['Microsoft.Resources/deployments/netapp-ontap-cloudmanager-vm']"
+                "['Microsoft.Resources/deployments/netapp-oncommand-cloudmanager']"
             ],
             "properties": {
                 "mode": "Incremental",
