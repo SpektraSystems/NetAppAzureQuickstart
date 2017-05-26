@@ -117,14 +117,14 @@
         "netappOntapCloudLicenseStandard":
             {
                 "type": "object",
-                "licenseType" : "Standard",
+                "licenseType" : "azure-cot-standard-paygo",
                 "instanceType" : "Standard_DS4_v2",
                 "storageType": "Standard_LRS"
             },
         "netappOntapCloudLicensePremium":
             {
                 "type": "object",
-                "licenseType" : "Premium",
+                "licenseType" : "azure-cot-premium-paygo",
                 "instanceType" : "Standard_DS5_v2",
                 "storageType": "Premium_LRS"
             },        
