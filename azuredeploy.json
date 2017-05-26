@@ -292,7 +292,7 @@
             "apiVersion": "2016-09-01",
             "comments": "Azure Resources that are shared within the infrastructure environment",
             "dependsOn": [
-                "['Microsoft.Resources/deployments/sql-vm']"
+                "['Microsoft.Resources/deployments/shared-resources']"
             ],
             "properties": {
                 "mode": "Incremental",
