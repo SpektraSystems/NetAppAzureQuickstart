@@ -1,100 +1,170 @@
-#!/bin/sh
-## Script to Setup NetApp OnCommand Cloud Manager and Deploy Working Environment NetApp ONTAP Cloud on Azure ##
+[CmdletBinding()]
+param(
+    [Parameter(Mandatory=$true)]
+    [String]$AdminLIF,
+    [Parameter(Mandatory=$true)]
+    [String]$iScSILIF,
+    [Parameter(Mandatory=$true)]
+    [String]$SVMName,
+    [Parameter(Mandatory=$true)]
+    [String]$SVMPwd,
+	[Parameter(Mandatory=$true)]
+    [decimal]$Capacity
+) 
 
-## Arguments : To be passed by Azure Custom Script Extension
-region=${1}
-otcName=${2}
-adminEmail=${3}
-adminPassword=${4}
-subscriptionId=${5}
-azureTenantId=${6}
-applicationId=${7}
-applicationKey=${8}
-vnetID=${9}
-cidr=${10}
-subnetID=${11}
-nsgID=${12}
-licenseType=${13}
-instanceType=${14}
-storageType=${15}
-QuickstartNameTagValue=${16}
-QuickstartProviderTagValue=${17}
+function Connect-ONTAP([String]$AdminLIF, [String]$iScSILIF, [String]$SVMName,[String]$SVMPwd, [decimal]$Capacity)
+{
+    $ErrorActionPreference = 'Stop'
 
-##Variable Values for Setting up OnCommand Manager 
-tenantName="azurenetappqs_tenant"
-roleID="Role-1"
-siteName="AzureQS"
-siteCompany="AzureQS"
-autoVsaCapacityManagement=true
-autoUpgrade=false
-## Variable Values for Deploying Working Environment on Azure 
-svmPassword="'$adminPassword'"
-ontapVersion="ONTAP-9.1.T4.azure"
-sqlvolname="sqldatadrive"
-sqlvolsize="500"
-unit="GB"
-snapshotPolicyName="default"
+    try {
+    
+        Start-Transcript -Path C:\cfn\log\WinEC2_Connect_Storage.ps1.txt -Append
+    
+        Write-Output "Started @ $(Get-Date)"
+        Write-Output "Admin Lif: $AdminLIF"
+        Write-Output "iScSI Lif: $iScSiLIF"
+        Write-Output "SVM Name : $SVMName"
+        Write-Output "SVM Password: $SVMPwd"
+        Write-Output "Capacity: $Capacity"
 
-## Downloading jQuery 
-sudo wget -O /usr/bin/jq http://stedolan.github.io/jq/download/linux64/jq
-sleep 5
-sudo chmod +x /usr/bin/jq
+        $AdminLIF= $AdminLIF.Substring($AdminLIF.IndexOf(':')+1)
+        $iScSiLIF= $iScSiLIF.Substring($iScSiLIF.IndexOf(':')+1)
+        $SVMName = $SVMName.Trim().Replace("-","_")
 
-## Setup NetApp OnCommand Cloud Manager
-curl http://localhost/occm/api/occm/setup/init -X POST --header 'Content-Type:application/json' --header 'Referer:AzureQS' --data '{ "tenantRequest": { "name": "'${tenantName}'", "description": "", "costCenter": "", "nssKeys": {} }, "proxyUrl": { "uri": "" }, "userRequest":{  "email": "'${adminEmail}'","lastName": "user", "firstName":"admin","roleId": "'${roleID}'","password": "'${adminPassword}'", "ldap": "false", "azureCredentials": { "subscriptionId": "'${subscriptionId}'", "tenantId": "'${azureTenantId}'", "applicationId": "'${applicationId}'", "applicationKey": "'${applicationKey}'" }  }, "site": "'${siteName}'", "company": "'${siteCompany}'", "autoVsaCapacityManagement": "'${autoVsaCapacityManagement}'",   "autoUpgrade": "'${autoUpgrade}'" }}'
-sleep 40
+        Setup-VM
 
-until sudo wget http://localhost/occmui > /dev/null 2>&1; do sudo wget http://localhost > /dev/null 2>&1 ; done
-sleep 60
+        $IqnName = "awsqsiqn"
+        $SecPasswd = ConvertTo-SecureString $SVMPwd -AsPlainText -Force
+        $SvmCreds = New-Object System.Management.Automation.PSCredential ("admin", $SecPasswd)
+        $VMIqn = (get-initiatorPort).nodeaddress
+        #Pad the data Volume size by 10 percent
+        $DataVolSize = [System.Math]::Floor($Capacity * 1.1)
+        #Log Volume will be one third of data with 10 percent padding
+        $LogVolSize = [System.Math]::Floor($Capacity *.37 ) 
 
-## Authenticate to NetApp OnCommand CloudManager
-curl http://localhost/occm/api/auth/login --header 'Content-Type:application/json' --header 'Referer:AzureQS' --data '{"email":"'${adminEmail}'","password":"'${adminPassword}'"}' --cookie-jar cookies.txt
-sleep 5
+		$DataLunSize = $Capacity
+		$LogLunSize =  $Capacity *.33
+        
+        Import-module 'C:\Program Files (x86)\NetApp\NetApp PowerShell Toolkit\Modules\DataONTAP\DataONTAP.psd1'
+        
+        Connect-NcController $AdminLIF -Credential $SvmCreds -Vserver $SVMName
+        Create-NcGroup $IqnName $VMIqn $SVMName
+        New-IscsiTargetPortal -TargetPortalAddress $iScSiLIF
+        Connect-Iscsitarget -NodeAddress (Get-IscsiTarget).NodeAddress -IsMultipathEnabled $True -TargetPortalAddress $iScSiLIF
+    
+        Get-IscsiSession | Register-IscsiSession
 
-## Getting the NetApp Tenant ID, to deploy the ONTAP Cloud
-tenantId=`sudo curl http://localhost/occm/api/tenants -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt | jq -r .[0].publicId`
+        New-Ncvol -name sql_data_root -Aggregate aggr1 -JunctionPath $null -size ([string]($DataVolSize)+"g") -SpaceReserve none
+        New-Ncvol -name sql_log_root -Aggregate aggr1 -JunctionPath $null -size ([string]($LogVolSize)+"g") -SpaceReserve none
 
-## Create a ONTAP Cloud working environment on Azure
-curl http://localhost/occm/api/azure/vsa/working-environments -X POST --cookie cookies.txt --header 'Content-Type:application/json' --header 'Referer:AzureQS' --data '{ "name": "'${otcName}'", "svmPassword": "'${svmPassword}'",  "vnetId": "'${vnetID}'",   "cidr": "'${cidr}'",  "description": "", "vsaMetadata": { "ontapVersion": "'${ontapVersion}'", "licenseType": "'${licenseType}'", "instanceType": "'${instanceType}'" }, "volume": { "name": "'${sqlvolname}'", "size": { "size": "'${sqlvolsize}'", "unit": "'${unit}'" }, "snapshotPolicyName": "'${snapshotPolicyName}'", "exportPolicyInfo": { "policyType": "custom", "ips": ["'${cidr}'"] }, "enableThinProvisioning": "'true'", "enableCompression": "false", "enableDeduplication": "false" }, "region": "'${region}'", "tenantId": "'${tenantId}'", "subnetId":"'${subnetID}'", "dataEncryptionType":"NONE", "ontapEncryptionParameters": null, "securityGroupId":"'${nsgID}'", "skipSnapshots": "false", "diskSize": { "size": "1","unit": "TB" }, "storageType": "'${storageType}'", "azureTags": [ { "tagKey": "'quickstartName'", "tagKey": "'${QuickstartNameTagValue}'"}, { "tagKey": "provider", "tagKey": "'${QuickstartProviderTagValue}'"} ],"writingSpeedState": "NORMAL" }' > /tmp/createnetappotc.txt
+        New-Nclun /vol/sql_data_root/sql_data_lun ([string]$DataLunSize+"gb") -ThinProvisioningSupportEnabled -OsType "windows_2008"
+        New-Nclun /vol/sql_log_root/sql_log_lun ([string]$LogLunSize+"gb") -ThinProvisioningSupportEnabled -OsType "windows_2008" 
 
-OtcPublicId=`cat /tmp/createnetappotc.txt| jq -r .publicId`
-if [ ${OtcPublicId} = null ] ; then
-  message=`cat /tmp/createnetappotc.txt| jq -r .message`
-  echo "OCCM setup failed: $message" > /tmp/occmError.txt
-  exit 1
-fi
-sleep 2
+        Add-Nclunmap /vol/sql_data_root/sql_data_lun $IqnName
+        Add-Nclunmap /vol/sql_log_root/sql_log_lun $IqnName
 
-## Check OTC Public ID
-waitForAction ${OtcPublicId} 60 1
-
-## Getting the NetApp Ontap Cloud Cluster Properties
+        
+        Start-NcHostDiskRescan
+        Wait-NcHostDisk -ControllerLunPath /vol/sql_data_root/sql_data_lun -ControllerName $SVMName
+        Wait-NcHostDisk -ControllerLunPath /vol/sql_log_root/sql_log_lun -ControllerName $SVMName
 
 
-curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=status' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt > /tmp/envdetails.txt
-otcstatus=`cat /tmp/envdetails.txt| jq -r .[].status.status`
-while [ ${otcstatus} = null ] -o [ $stats -eq INITIALIZING ]
- do
-  message='Not Deployed Yet, Checking again in 60 seconds'
-  echo  ${message}
-  sleep 60
-  curl 'http://localhost/occm/api/azure/vsa/working-environments?/'${OtcPublicId}'fields=status' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt > /tmp/envdetails.txt
-  otcstatus=`cat /tmp/envdetails.txt| jq -r .[].status.status`
+        $DataDisk = (Get-Nchostdisk | Where-Object {$_.ControllerPath -like "*sql_data_lun*"}).Disk
+        $LogDisk = (Get-Nchostdisk | Where-Object {$_.ControllerPath -like "*sql_log_lun*"}).Disk
 
-done
+        Stop-Service -Name ShellHWDetection
+        Set-Disk -Number $DataDisk -IsOffline $False
+        Initialize-Disk -Number $DataDisk
+        New-Partition -DiskNumber $DataDisk -UseMaximumSize -AssignDriveLetter  | ForEach-Object { Start-Sleep -s 5; $_| Format-Volume -NewFileSystemLabel "NetApp Disk 1" -Confirm:$False -Force }
+    
+        Set-Disk -number $LogDisk -IsOffline $False
+        Initialize-disk -Number $LogDisk
+        New-Partition -DiskNumber $LogDisk -UseMaximumSize -AssignDriveLetter | ForEach-Object { Start-Sleep -s 5; $_| Format-Volume -NewFileSystemLabel "NetApp Disk 2" -Confirm:$False -Force}
+        Start-Service -Name ShellHWDetection
 
-sleep 5
+        Write-Output "Completed @ $(Get-Date)"
+        Stop-Transcript
 
-curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=ontapClusterProperties' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt > /tmp/ontapClusterProperties.txt
+    } 
+    catch {
+        Write-Output "$($_.exception.message)@ $(Get-Date)"
+		exit 1
+    }
+ }
 
-## grab the Cluster managment LIF IP address
-clusterLif=`curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=ontapClusterProperties' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt |jq -r .[].ontapClusterProperties.nodes[].lifs[] |grep "Cluster Management" -a2|head -1|cut -f4 -d '"'`
-echo "${clusterLif}" > /tmp/clusterLif.txt
-## grab the iSCSI data LIF IP address
-dataLif=`curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=ontapClusterProperties' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt |jq -r .[].ontapClusterProperties.nodes[].lifs[] |grep iscsi -a4|head -1|cut -f4 -d '"'`
-echo "${dataLif}" > /tmp/iscsiLif.txt
-## grab the NFS and CIFS data LIF IP address
-dataLif2=`curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=ontapClusterProperties' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt |jq -r .[].ontapClusterProperties.nodes[].lifs[] |grep nfs -a4|head -1|cut -f4 -d '"'`
-echo "${dataLif2}" > /tmp/nasLif.txt
+ 
 
-# Cluster Ip Addresses Exported in tmp Files
+function Create-NcGroup( [String] $VserverIqn, [String] $InisitatorIqn, [String] $Vserver)
+{
+    $iGroupList = Get-ncigroup
+    $iGroupSetup = $False
+    $iGroupInitiatorSetup = $False
+
+    #Find if iGroup is already setup, add if not 
+    foreach($igroup in $iGroupList)
+    {
+        if ($igroup.Name -eq $VserverIqn)   
+        {
+            $iGroupSetup = $True
+            foreach($initiator in $igroup.Initiators)
+            {
+                if($initiator.InitiatorName.Equals($InisitatorIqn))
+                {
+                    $iGroupInitiatorSetup = $True
+                    Write-Output "Found $VserverIqn Iqn is alerady setup on SvM $Vserver with Initiator $InisitatorIqn" 
+                    break
+                }
+            }
+
+            break
+        }
+    }
+    if($iGroupInitiatorSetup -eq $False)
+    {
+        if ((get-nciscsiservice).IsAvailable -ne "True") { 
+                Add-NcIscsiService 
+        }
+        if ($iGroupSetup -eq $False) {
+            new-ncigroup -name $VserverIqn -Protocol iScSi -Type Windows    
+        }
+        Add-NcIgroupInitiator -name $VserverIqn -Initiator $InisitatorIqn
+        Write-Output "Set up $VserverIqn Iqn on SvM $Vserver"
+    }
+
+}
+
+function Set-MultiPathIO()
+{
+    $IsEnabled = (Get-WindowsOptionalFeature -FeatureName MultiPathIO -Online).State
+
+    if ($IsEnabled -ne "Enabled") {
+
+        Enable-WindowsOptionalFeature –Online –FeatureName MultiPathIO
+     }
+        
+}
+
+function Start-ThisService([String]$ServiceName)
+{
+    
+    $Service = Get-Service -Name $ServiceName
+    if ($Service.Status -ne "Running"){
+        Start-Service $ServiceName
+        Write-Output "Starting $ServiceName"
+    }
+    if ($Service.StartType -ne "Automatic") {
+        Set-Service $ServiceName -startuptype "Automatic"
+        Write-Output "Setting $ServiceName Service Startup to Automatic"
+    }
+   
+}
+
+ function Setup-VM ()
+ {
+    Set-MultiPathIO
+    Start-ThisService "MSiSCSI"
+ }
+
+
+
+Connect-ONTAP $AdminLIF $iScSILIF $SVMName $SVMPwd $Capacity
