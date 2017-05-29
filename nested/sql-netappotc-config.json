@@ -23,9 +23,10 @@
     },
     "variables": {
         "scriptFileName" : "netapp_connect_ontap_win.ps1",
-        "adminLif" : "10.0.2.10",
-        "iScSILIF" : "10.0.2.5",
-        "SVMName" : "[concat('netappotc',uniqueString(resourceGroup().id))]",
+        "psToolkitFileName" : "NetApp_PowerShell_Toolkit_4.3.0.msi",
+        "adminLif" : "10.0.2.5",
+        "iScSILIF" : "10.0.2.10",
+        "SVMName" : "[concat('svm_netapp_otc_',uniqueString(resourceGroup().id))]",
         "SVMPwd" : "[parameters('adminPassword')]",
         "Capacity" : "400"
     },
@@ -45,11 +46,11 @@
             "autoUpgradeMinorVersion": true,
             "settings": {
                 "fileUris": [
-                    "[concat(parameters('_artifactsLocation'),'/scripts/',variables('scriptFileName'),parameters('_artifactsLocationSasToken'))]"
+                    "[concat(parameters('_artifactsLocation'),'/scripts/',variables('scriptFileName'),parameters('_artifactsLocationSasToken'))]",
+                    "[concat(parameters('_artifactsLocation'),'/scripts/',variables('psToolkitFileName'),parameters('_artifactsLocationSasToken'))]"
+
                 ],
-            "protectedSettings": {
-                "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('scriptFileName'), ' ', variables('adminLif'),' ', variables('iScSILIF'),' ', variables('SVMName'),' ', variables('SVMPwd'),' ', variables('capacity'))]"
-            }       
+                "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File', variables('scriptFileName'), ' ', variables('adminLif'),' ', variables('iScSILIF'),' ', variables('SVMName'),' ', variables('SVMPwd'),' ', variables('capacity'))]"      
         }
       }
     }
