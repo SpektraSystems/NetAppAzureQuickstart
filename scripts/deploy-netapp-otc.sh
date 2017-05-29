@@ -65,19 +65,21 @@ if [ ${OtcPublicId} = null ] ; then
 fi
 sleep 2
 
+## Check OTC Public ID
+waitForAction ${OtcPublicId} 60 1
+
 ## Getting the NetApp Ontap Cloud Cluster Properties
 
 
-curl 'http://localhost/occm/api/azure/vsa/volumes?workingEnvironmentId='${OtcPublicId}'' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt > /tmp/volumedetails.txt
-
-volumeprovisioned=`cat /tmp/volumedetails.txt| jq -r .[]?.name`
-while [ ${volumeprovisioned} = null ]
+curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=status' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt > /tmp/envdetails.txt
+otcstatus=`cat /tmp/envdetails.txt| jq -r .[].status.status`
+while [ ${otcstatus} = null ] -o [ $stats -eq INITIALIZING ]
  do
   message='Not Deployed Yet, Checking again in 60 seconds'
   echo  ${message}
   sleep 60
-  curl 'http://localhost/occm/api/azure/vsa/volumes?workingEnvironmentId='${OtcPublicId}'' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt > /tmp/volumedetails.txt
-  volumeprovisioned=`cat /tmp/volumedetails.txt| jq -r .[]?.name`
+  curl 'http://localhost/occm/api/azure/vsa/working-environments?/'${OtcPublicId}'fields=status' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt > /tmp/envdetails.txt
+  otcstatus=`cat /tmp/envdetails.txt| jq -r .[].status.status`
 
 done
 
