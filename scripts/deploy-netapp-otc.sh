@@ -68,13 +68,14 @@ sleep 2
 
 ## Getting the NetApp Ontap Cloud Cluster Properties
 
-curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=status' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt > /tmp/envdetails.txt
-otcstatus=`cat /tmp/envdetails.txt| jq -r .[].status.status`
+
+curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=status' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt > /tmp/envdetails.json
+otcstatus=`cat /tmp/envdetails.json | jq -r .[].status.status`
 
 check_deploymentstatus()
 {
-curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=status' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt > /tmp/envdetails.txt
-otcstatus=`cat /tmp/envdetails.txt| jq -r .[].status.status`
+curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=status' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt > /tmp/envdetails.json
+otcstatus=`cat /tmp/envdetails.json | jq -r .[].status.status`
 }
 
 if [ ${otcstatus} = null ]
@@ -90,9 +91,9 @@ if [ ${otcstatus} = null ]
           sleep 60
           check_deploymentstatus
 fi
-sleep 20
+sleep 5
 
-curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=ontapClusterProperties' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt > /tmp/ontapClusterProperties.txt
+curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=ontapClusterProperties' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt > /tmp/ontapClusterProperties.json
 
 ## grab the Cluster managment LIF IP address
 clusterLif=`curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=ontapClusterProperties' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt |jq -r .[].ontapClusterProperties.nodes[].lifs[] |grep "Cluster Management" -a2|head -1|cut -f4 -d '"'`
