@@ -26,7 +26,7 @@
         "psToolkitFileName" : "NetApp_PowerShell_Toolkit_4.3.0.msi",
         "adminLif" : "10.0.2.5",
         "iScSILIF" : "10.0.2.10",
-        "SVMName" : "[concat('svm_netapp_otc_',uniqueString(resourceGroup().id))]",
+        "SVMName" : "[concat('svm_netappotc',uniqueString(resourceGroup().id))]",
         "SVMPwd" : "[parameters('adminPassword')]",
         "Capacity" : "400"
     },
