@@ -1,5 +1,5 @@
 #!/bin/sh
-## Script to Setup NetApp OnCommand Cloud Manager and Deploy Working Environment for NetApp ONTAP Cloud on Azure ##
+## Script to Setup NetApp OnCommand Cloud Manager and Deploy Working Environment NetApp ONTAP Cloud on Azure ##
 
 ## Arguments : To be passed by Azure Custom Script Extension
 region=${1}
@@ -67,16 +67,27 @@ sleep 2
 
 ## Check OTC Public ID
 waitForAction ${OtcPublicId} 60 1
+
+## Getting the NetApp Ontap Cloud Cluster Properties
+
+curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=ontapClusterProperties' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt > /tmp/ontapClusterProperties.txt
+
+ontapcloudserialnumber=`cat /tmp/ontapClusterProperties.txt| jq -r .ontapClusterProperties.nodes[].serialNumber`
+while [ ${ontapcloudserialnumber} = null ]
+ do
+  message='Not Deployed Yet, Checking again in 60 seconds'
+  echo  ${message}
+  sleep 60
+done
+
 ## grab the Cluster managment LIF IP address
-clusterLif=`curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=clusterProperties' -X GET --header 'Content-Type:application/json' --header 'Referer:AWSQS1' --cookie cookies.txt |jq -r .clusterProperties.lifs |grep "Cluster Management" -a2|head -1|cut -f4 -d '"'`
+clusterLif=`curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=ontapClusterProperties' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt |jq -r .ontapClusterProperties.nodes[].lifs[] |grep "Cluster Management" -a2|head -1|cut -f4 -d '"'`
 echo "${clusterLif}" > /tmp/clusterLif.txt
 ## grab the iSCSI data LIF IP address
-dataLif=`curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=clusterProperties' -X GET --header 'Content-Type:application/json' --header 'Referer:AWSQS1' --cookie cookies.txt |jq -r .clusterProperties.lifs |grep iscsi -a4|head -1|cut -f4 -d '"'`
+dataLif=`curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=ontapClusterProperties' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt |jq -r .ontapClusterProperties.nodes[].lifs[] |grep iscsi -a4|head -1|cut -f4 -d '"'`
 echo "${dataLif}" > /tmp/iscsiLif.txt
 ## grab the NFS and CIFS data LIF IP address
-dataLif2=`curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=clusterProperties' -X GET --header 'Content-Type:application/json' --header 'Referer:AWSQS1' --cookie cookies.txt |jq -r .clusterProperties.lifs |grep nfs -a4|head -1|cut -f4 -d '"'`
+dataLif2=`curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=ontapClusterProperties' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt |jq -r .ontapClusterProperties.nodes[].lifs[] |grep nfs -a4|head -1|cut -f4 -d '"'`
 echo "${dataLif2}" > /tmp/nasLif.txt
 
-# Remove passwords from files
-sed -i s/${adminPassword}/xxxxx/g /var/log/cloud-init.log
-sed -i s/${svmPassword}/xxxxx/g /var/log/cloud-init.log
+# Cluster Ip Addresses Exported in tmp Files
