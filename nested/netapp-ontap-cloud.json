@@ -85,13 +85,5 @@
           }
         }
     }
-],
-"outputs": {
-        "NetApp ONTAP Cloud Manager FQDN:": {
-            "value": "variables('subnetID')",
-            "type": "string"
-        },
-        "Jump VM FQDN": {
-            "value": "samplefornow",
-            "type": "string"
-        }}}
+  ]
+}
