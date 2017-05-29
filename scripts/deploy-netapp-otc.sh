@@ -65,9 +65,6 @@ if [ ${OtcPublicId} = null ] ; then
 fi
 sleep 2
 
-## Check OTC Public ID
-waitForAction ${OtcPublicId} 60 1
-
 ## Getting the NetApp Ontap Cloud Cluster Properties
 
 
