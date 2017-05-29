@@ -45,7 +45,7 @@ echo $QuickstartNameTagName
 echo $QuickstartNameTagValue
 echo $QuickstartProviderTagName
 echo $QuickstartProviderTagValue
-echo $otcName=azureqsotc
+echo $otcName
 
 
 ##Fixed Values##
