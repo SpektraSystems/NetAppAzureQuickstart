@@ -49,8 +49,6 @@
         }
     },
     "variables": {
-        "deployOTCScriptName" : "deploy-netapp-otc.sh",
-        "customScriptCommand" : "su -c'sh ",
         "subscriptionId" : "[subscription().subscriptionId]",
         "azureADTenantID" : "[subscription().tenantId]",
         "subnetID": "[concat(parameters('vnetID'),'/subnets/',parameters('dataSubnetName'))]",
@@ -58,8 +56,9 @@
         "netappOntapCloudLicenseType" : "[parameters('netappOntapCloudLicense').licenseType]",
         "netappOntapCloudInstanceType" : "[parameters('netappOntapCloudLicense').instanceType]",
         "netappOntapCloudStorageType" : "[parameters('netappOntapCloudLicense').storageType]",
-        "quickstartNameTagValue" : "[parameters('quickstartTags').name]",
-        "quickstartProviderTagValue" : "[parameters('NetAppTags').provider]",
+        "otcName" : "[concat('netappotc',uniqueString(resourceGroup().id))]",
+        "deployOTCScriptName" : "deploy-netapp-otc.sh",
+        "customScriptCommand" : "su -c'sh ",
         "scriptClose": "'"
     },
     "resources": [{
@@ -80,7 +79,7 @@
                 "fileUris": [
                     "[concat(parameters('_artifactsLocation'),'/scripts/',variables('deployOTCScriptName'),parameters('_artifactsLocationSasToken'))]"
                 ],
-             "commandToExecute": "[concat(variables('customScriptCommand'),' ',variables('deployOTCScriptName'),' ',parameters('deploymentRegion'),' ',parameters('adminEmailAddress'),' ',parameters('adminPassword'),' ',variables('subscriptionId'),' ',variables('azureADTenantID'),' ',parameters('azureADApplicationID'),' ',parameters('azureADApplicationSecret'),' ',parameters('vnetID'),' ',parameters('cidr'),' ',variables('subnetID'),' ',variables('nsgID'),' ',variables('netappOntapCloudLicenseType'),' ',variables('netappOntapCloudInstanceType'),' ',variables('netappOntapCloudStorageType'),' ',variables('scriptClose'))]"     
+             "commandToExecute": "[concat(variables('customScriptCommand'),' ',variables('deployOTCScriptName'),' ',parameters('deploymentRegion'),' ',variables('otcName'),' ',parameters('adminEmailAddress'),' ',parameters('adminPassword'),' ',variables('subscriptionId'),' ',variables('azureADTenantID'),' ',parameters('azureADApplicationID'),' ',parameters('azureADApplicationSecret'),' ',parameters('vnetID'),' ',parameters('cidr'),' ',variables('subnetID'),' ',variables('nsgID'),' ',variables('netappOntapCloudLicenseType'),' ',variables('netappOntapCloudInstanceType'),' ',variables('netappOntapCloudStorageType'),' ',variables('quickstartNameTagValue'),' 'variables('quickstartProviderTagValue'),' 'variables('scriptClose'))]"     
           }
         }
     }
