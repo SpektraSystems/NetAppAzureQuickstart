@@ -57,6 +57,8 @@
         "netappOntapCloudInstanceType" : "[parameters('netappOntapCloudLicense').instanceType]",
         "netappOntapCloudStorageType" : "[parameters('netappOntapCloudLicense').storageType]",
         "otcName" : "[concat('netappotc',uniqueString(resourceGroup().id))]",
+        "quickstartNameTagValue" : "[parameters('quickstartTags').name]",
+        "quickstartProviderTagValue" : "[parameters('NetAppTags').provider]",
         "deployOTCScriptName" : "deploy-netapp-otc.sh",
         "customScriptCommand" : "su -c'sh ",
         "scriptClose": "'"
