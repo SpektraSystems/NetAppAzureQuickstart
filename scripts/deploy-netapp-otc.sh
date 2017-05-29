@@ -57,7 +57,7 @@ tenantId=`sudo curl http://localhost/occm/api/tenants -X GET --header 'Content-T
 ## Create a ONTAP Cloud working environment on Azure
 curl http://localhost/occm/api/azure/vsa/working-environments -X POST --cookie cookies.txt --header 'Content-Type:application/json' --header 'Referer:AzureQS' --data '{ "name": "'${otcName}'", "svmPassword": "'${svmPassword}'",  "vnetId": "'${vnetID}'",   "cidr": "'${cidr}'",  "description": "", "vsaMetadata": { "ontapVersion": "'${ontapVersion}'", "licenseType": "'${licenseType}'", "instanceType": "'${instanceType}'" }, "volume": { "name": "'${sqlvolname}'", "size": { "size": "'${sqlvolsize}'", "unit": "'${unit}'" }, "snapshotPolicyName": "'${snapshotPolicyName}'", "exportPolicyInfo": { "policyType": "custom", "ips": ["'${cidr}'"] }, "enableThinProvisioning": "'true'", "enableCompression": "false", "enableDeduplication": "false" }, "region": "'${region}'", "tenantId": "'${tenantId}'", "subnetId":"'${subnetID}'", "dataEncryptionType":"NONE", "ontapEncryptionParameters": null, "securityGroupId":"'${nsgID}'", "skipSnapshots": "false", "diskSize": { "size": "1","unit": "TB" }, "storageType": "'${storageType}'", "azureTags": [ { "tagKey": "'quickstartName'", "tagKey": "'${QuickstartNameTagValue}'"}, { "tagKey": "provider", "tagKey": "'${QuickstartProviderTagValue}'"} ],"writingSpeedState": "NORMAL" }' > /tmp/createnetappotc.txt
 
-OtcPublicId=`cat /tmp/createnetappotc.txt| jq -r .publicId`
+OtcPublicId=`cat /tmp/createnetappotc.txt | jq -r .publicId`
 if [ ${OtcPublicId} = null ] ; then
   message=`cat /tmp/createnetappotc.txt| jq -r .message`
   echo "OCCM setup failed: $message" > /tmp/occmError.txt
@@ -68,41 +68,35 @@ sleep 2
 
 ## Getting the NetApp Ontap Cloud Cluster Properties
 
-
 curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=status' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt > /tmp/envdetails.json
-otcstatus=`cat /tmp/envdetails.json | jq -r .[].status.status`
+otcstatus=`cat /tmp/envdetails.json | jq -r .status.status`
 
 check_deploymentstatus()
 {
 curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=status' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt > /tmp/envdetails.json
-otcstatus=`cat /tmp/envdetails.json | jq -r .[].status.status`
+otcstatus=`cat /tmp/envdetails.json | jq -r .status.status`
 }
 
-if [ ${otcstatus} = null ]
-    then
-          message="Not Deployed Yet, Checking again in 60 seconds"
-          echo  ${message}
-          sleep 60
-          check_deploymentstatus
- elif [ ${otcstatus} = INITIALIZING ]
- then
-          message="Not Deployed Yet, Checking again in 60 seconds"
-          echo  ${message}
-          sleep 60
-          check_deploymentstatus
-fi
+until  [ ${otcstatus} = ON ] 
+do
+  message="Not Deployed Yet, Checking again in 60 seconds"
+  echo  ${message}
+  sleep 60
+  check_deploymentstatus
+done
+
 sleep 5
 
 curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=ontapClusterProperties' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt > /tmp/ontapClusterProperties.json
 
 ## grab the Cluster managment LIF IP address
-clusterLif=`curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=ontapClusterProperties' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt |jq -r .[].ontapClusterProperties.nodes[].lifs[] |grep "Cluster Management" -a2|head -1|cut -f4 -d '"'`
+clusterLif=`curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=ontapClusterProperties' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt |jq -r .ontapClusterProperties.nodes[].lifs[] |grep "Cluster Management" -a2|head -1|cut -f4 -d '"'`
 echo "${clusterLif}" > /tmp/clusterLif.txt
 ## grab the iSCSI data LIF IP address
-dataLif=`curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=ontapClusterProperties' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt |jq -r .[].ontapClusterProperties.nodes[].lifs[] |grep iscsi -a4|head -1|cut -f4 -d '"'`
+dataLif=`curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=ontapClusterProperties' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt |jq -r .ontapClusterProperties.nodes[].lifs[] |grep iscsi -a4|head -1|cut -f4 -d '"'`
 echo "${dataLif}" > /tmp/iscsiLif.txt
 ## grab the NFS and CIFS data LIF IP address
-dataLif2=`curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=ontapClusterProperties' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt |jq -r .[].ontapClusterProperties.nodes[].lifs[] |grep nfs -a4|head -1|cut -f4 -d '"'`
+dataLif2=`curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=ontapClusterProperties' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt |jq -r .ontapClusterProperties.nodes[].lifs[] |grep nfs -a4|head -1|cut -f4 -d '"'`
 echo "${dataLif2}" > /tmp/nasLif.txt
 
 # Cluster Ip Addresses Exported in tmp Files
