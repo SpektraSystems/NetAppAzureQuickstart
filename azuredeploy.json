@@ -2,16 +2,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "deploymentRegion": {
-            "type": "string",
-            "allowedValues": [
-                "eastus",
-                "westus"
-            ],
-            "metadata": {
-                "description": "Azure Region to deploy resources to. "
-            }
-        },
         "adminUsername": {
             "type": "string",
             "metadata": {
@@ -149,9 +139,6 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "deploymentRegion": {
-                        "value": "[parameters('deploymentRegion')]"
-                    },
                     "webNsgName": {
                         "value": "[variables('webNsgName')]"
                     },
@@ -218,9 +205,6 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "deploymentRegion": {
-                        "value": "[parameters('deploymentRegion')]"
-                    },
                     "adminUsername": {
                         "value": "[parameters('adminUsername')]"
                     },
@@ -281,9 +265,6 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "deploymentRegion": {
-                        "value": "[parameters('deploymentRegion')]"
-                    },
                     "adminUsername": {
                         "value": "[parameters('adminUsername')]"
                     },
@@ -338,9 +319,6 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "deploymentRegion": {
-                        "value": "[parameters('deploymentRegion')]"
-                    },
                     "adminUsername": {
                         "value": "[parameters('adminUsername')]"
                     },
@@ -401,9 +379,6 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "deploymentRegion": {
-                        "value": "[parameters('deploymentRegion')]"
-                    },
                     "adminEmailAddress": {
                         "value": "[parameters('adminEmailAddress')]"
                     },
@@ -455,7 +430,7 @@
             "apiVersion": "2016-09-01",
             "comments": "",
             "dependsOn": [
-                "['Microsoft.Resources/deployments/sql-vm']"
+                "['Microsoft.Resources/deployments/netapp-ontap-cloud']"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -464,8 +439,8 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "deploymentRegion": {
-                        "value": "[parameters('deploymentRegion')]"
+                    "adminPassword": {
+                        "value": "[parameters('adminPassword')]"
                     },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
@@ -487,13 +462,13 @@
         }
     ],
     "outputs": {
-        "NetApp ONTAP Cloud Manager FQDN:": {
-            "value": "samplefornow",
-            "type": "string"
+        "NetApp ONTAP Cloud Manager URL:": {
+            "type": "string",
+            "value": "[reference('netapp-oncommand-cloudmanager').outputs.NetAppOnCommandCloudManagerURL.value]"
         },
         "Jump VM FQDN": {
-            "value": "samplefornow",
-            "type": "string"
+            "type": "string",
+            "value": "[reference('jump-vm').outputs.jumpVmDNSLabel.value]"
         }
     }
 }

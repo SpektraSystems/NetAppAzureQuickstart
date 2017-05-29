@@ -2,8 +2,8 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "deploymentRegion": {
-            "type": "string"
+        "adminPassword": {
+            "type": "securestring"
         },
         "_artifactsLocation": {
             "type": "string"
@@ -21,12 +21,19 @@
             "type": "object"
         }
     },
-    "variables": {},
+    "variables": {
+        "scriptFileName" : "netapp_connect_ontap_win.ps1",
+        "adminLif" : "10.0.2.10",
+        "iScSILIF" : "10.0.2.5",
+        "SVMName" : "[concat('netappotc',uniqueString(resourceGroup().id))]",
+        "SVMPwd" : "[parameters('adminPassword')]",
+        "Capacity" : "400"
+    },
     "resources": [{
-        "type": "Microsoft.Compute/virtualMachines/extensions",
+         "type": "Microsoft.Compute/virtualMachines/extensions",
         "name": "[concat(parameters('sqlVmName'),'/','sqlNetAppOTCConfig')]",
         "apiVersion": "2016-03-30",
-        "location": "[parameters('deploymentRegion')]",
+        "location": "[resourceGroup().location]",
         "tags": {
             "quickstartName": "[parameters('quickstartTags').name]",
             "provider": "[parameters('NetAppTags').provider]"
@@ -38,11 +45,13 @@
             "autoUpgradeMinorVersion": true,
             "settings": {
                 "fileUris": [
-                    "[concat(parameters('_artifactsLocation'),'/scripts/','NetApp_PowerShell_Toolkit_4.3.0.msi',parameters('_artifactsLocationSasToken'))]"
+                    "[concat(parameters('_artifactsLocation'),'/scripts/',variables('scriptFileName'),parameters('_artifactsLocationSasToken'))]"
                 ],
-                "commandToExecute": "msiexec.exe /a NetApp_PowerShell_Toolkit_4.3.0.msi"
-            }
+            "protectedSettings": {
+                "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('scriptFileName'), ' ', variables('adminLif'),' ', variables('iScSILIF'),' ', variables('SVMName'),' ', variables('SVMPwd'),' ', variables('capacity'))]"
+            }       
         }
-
-    }]
+      }
+    }
+  ]
 }

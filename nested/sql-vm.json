@@ -2,9 +2,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "deploymentRegion": {
-            "type": "string"
-        },
         "sqlVmName": {
             "type": "string"
         },
@@ -52,7 +49,7 @@
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[parameters('dataStorageAccountName')]",
             "apiVersion": "2017-06-01",
-            "location": "[parameters('deploymentRegion')]",
+            "location": "[resourceGroup().location]",
             "tags": {
                 "quickstartName": "[parameters('quickstartTags').name]",
                 "provider": "[parameters('NetAppTags').provider]"
@@ -67,7 +64,7 @@
             "apiVersion": "2016-03-30",
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[parameters('sqlVmNicName')]",
-            "location": "[parameters('deploymentRegion')]",
+            "location": "[resourceGroup().location]",
             "comments": "OnCommand Server nic name",
             "tags": {
                 "quickstartName": "[parameters('quickstartTags').name]",
@@ -90,7 +87,7 @@
             "apiVersion": "2016-03-30",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[parameters('sqlVmName')]",
-            "location": "[parameters('deploymentRegion')]",
+            "location": "[resourceGroup().location]",
             "comments": "OnCommand Manager VM",
             "tags": {
                 "quickstartName": "[parameters('quickstartTags').name]",

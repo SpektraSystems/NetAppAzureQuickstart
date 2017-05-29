@@ -2,9 +2,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "deploymentRegion": {
-            "type": "string"
-        },
         "webNsgName": {
             "type": "string"
         },
@@ -60,7 +57,7 @@
             "type": "Microsoft.Network/networkSecurityGroups",
             "name": "[parameters('webNSGName')]",
             "apiVersion": "2016-03-30",
-            "location": "[parameters('deploymentRegion')]",
+            "location": "[resourceGroup().location]",
             "comments": " NSG for Web subnet",
             "tags": {
                 "displayName": "Web NSG",
@@ -88,7 +85,7 @@
             "type": "Microsoft.Network/networkSecurityGroups",
             "name": "[parameters('dataNSGName')]",
             "apiVersion": "2016-03-30",
-            "location": "[parameters('deploymentRegion')]",
+            "location": "[resourceGroup().location]",
             "comments": " NSG for Data subnet",
             "tags": {
                 "displayName": "Data NSG",
@@ -101,7 +98,7 @@
             "type": "Microsoft.Network/networkSecurityGroups",
             "name": "[parameters('jumpNSGName')]",
             "apiVersion": "2016-03-30",
-            "location": "[parameters('deploymentRegion')]",
+            "location": "[resourceGroup().location]",
             "comments": " NSG for Jump subnet",
             "tags": {
                 "displayName": "Jump NSG",
@@ -129,7 +126,7 @@
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[parameters('diagStorageAccountName')]",
             "apiVersion": "2016-01-01",
-            "location": "[parameters('deploymentRegion')]",
+            "location": "[resourceGroup().location]",
             "comments": "Storage account used to store the Web VM disks",
             "tags": {
                 "displayName": "Web VM Storage Account",
@@ -148,7 +145,7 @@
             "type": "Microsoft.Network/virtualNetworks",
             "name": "[parameters('virtualNetworkName')]",
             "apiVersion": "2016-03-30",
-            "location": "[parameters('deploymentRegion')]",
+            "location": "[resourceGroup().location]",
             "comments": "Virtual network for overall solution",
             "tags": {
                 "displayName": "Virtual Network",
