@@ -33,7 +33,7 @@ function Connect-ONTAP([String]$AdminLIF, [String]$iScSILIF, [String]$SVMName,[S
 
         Setup-VM
 
-        $IqnName = "awsqsiqn"
+        $IqnName = "azureqsiqn"
         $SecPasswd = ConvertTo-SecureString $SVMPwd -AsPlainText -Force
         $SvmCreds = New-Object System.Management.Automation.PSCredential ("admin", $SecPasswd)
         $VMIqn = (get-initiatorPort).nodeaddress
@@ -166,5 +166,10 @@ function Start-ThisService([String]$ServiceName)
  }
 
 
-
+$msifile= 'NetApp_PowerShell_Toolkit_4.3.0.msi' 
+$arguments= ' /quiet ' 
+Start-Process `
+     -file  $msifile `
+     -arg $arguments `
+     -passthru | Wait-Process
 Connect-ONTAP $AdminLIF $iScSILIF $SVMName $SVMPwd $Capacity
