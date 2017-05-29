@@ -58,6 +58,8 @@
         "netappOntapCloudLicenseType" : "[parameters('netappOntapCloudLicense').licenseType]",
         "netappOntapCloudInstanceType" : "[parameters('netappOntapCloudLicense').instanceType]",
         "netappOntapCloudStorageType" : "[parameters('netappOntapCloudLicense').storageType]",
+        "quickstartNameTagValue" : "[parameters('quickstartTags').name]",
+        "quickstartProviderTagValue" : "[parameters('NetAppTags').provider]",
         "scriptClose": "'"
     },
     "resources": [{
