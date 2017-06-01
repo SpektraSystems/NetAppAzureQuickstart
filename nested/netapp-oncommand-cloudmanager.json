@@ -3,16 +3,10 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "adminUserName": {
-      "type": "string",
-      "metadata": {
-        "description": "Admin user name for the VMs"
-      }
+      "type": "string"
     },
     "adminPassword": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Admin password for the VMs (A mix of upper and lower-case characters, digits and symbols)"
-      }
+      "type": "securestring"
     },
     "webStorageAccountName": {
       "type": "string"
@@ -27,9 +21,6 @@
       "type": "string"
     },
     "webSubnetName": {
-      "type": "string"
-    },
-    "webNsgName": {
       "type": "string"
     },
     "OnCommandCloudManagerVmName": {
@@ -178,5 +169,11 @@
         }
       }
     }
-  ]
+  ],
+  "outputs": {
+    "NetAppOnCommandCloudManagerURL": {
+      "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses',parameters('OnCommandCloudManagerpublicIPAddressName'))).dnsSettings.fqdn]",
+      "type": "string"
+    }
+ }
 }

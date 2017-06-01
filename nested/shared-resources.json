@@ -3,98 +3,55 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "webNsgName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the Network Security Group for the Web tier"
-            }
+            "type": "string"
         },
         "dataNsgName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the Network Security Group for the Data tier"
-            }
+            "type": "string"
         },
         "jumpNsgName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the Network Security Group for the Jump tier"
-            }
+            "type": "string"
         },
         "diagStorageAccountName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the diagnostic storage account"
-            }
+            "type": "string"
         },
         "storageAccountType": {
-            "type": "string",
-            "metadata": {
-                "description": "Type of storage account to be used"
-            }
+            "type": "string"
         },
         "virtualNetworkName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the Virtual Network"
-            }
+            "type": "string"
         },
         "dataSubnetName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the subnet for the Data tier"
-            }
+            "type": "string"
         },
         "jumpSubnetName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the subnet for the Jump tier"
-            }
+            "type": "string"
         },
         "webSubnetName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the subnet for the Web tier"
-            }
+            "type": "string"
         },
         "addressPrefix": {
-            "type": "string",
-            "metadata": {
-                "description": "Address prefix used for the Virtual network"
-            }
+            "type": "string"
         },
         "webSubnetPrefix": {
-            "type": "string",
-            "metadata": {
-                "description": "Address prefix used for the Web subnet"
-            }
+            "type": "string"
         },
         "dataSubnetPrefix": {
-            "type": "string",
-            "metadata": {
-                "description": "Address prefix used for the Data subnet"
-            }
+            "type": "string"
         },
         "jumpSubnetPrefix": {
-            "type": "string",
-            "metadata": {
-                "description": "Address prefix used for the Jump subnet"
-            }
+            "type": "string"
+        },
+        "remoteAllowedCIDR": {
+            "type": "string"
         },
         "NetAppTags": {
-            "type": "object",
-            "metadata": {
-                "description": "Tags for NetApp"
-            }
+            "type": "object"
         },
         "quickstartTags": {
-            "type": "object",
-            "metadata": {
-                "description": "Tags for quick start templates"
-            }
+            "type": "object"
         }
     },
     "variables": {
-        "apiVersion": "2016-09-01"
     },
     "resources": [{
             "type": "Microsoft.Network/networkSecurityGroups",
@@ -115,7 +72,7 @@
                         "protocol": "Tcp",
                         "sourcePortRange": "*",
                         "destinationPortRange": "80",
-                        "sourceAddressPrefix": "Internet",
+                        "sourceAddressPrefix": "[parameters('remoteAllowedCIDR')]",
                         "destinationAddressPrefix": "[parameters('webSubnetPrefix')]",
                         "access": "Allow",
                         "priority": 100,
@@ -156,7 +113,7 @@
                         "protocol": "Tcp",
                         "sourcePortRange": "*",
                         "destinationPortRange": "3389",
-                        "sourceAddressPrefix": "Internet",
+                        "sourceAddressPrefix": "[parameters('remoteAllowedCIDR')]",
                         "destinationAddressPrefix": "[parameters('jumpSubnetPrefix')]",
                         "access": "Allow",
                         "priority": 100,

@@ -3,82 +3,40 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "sqlVmName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name to be used for the SQL-VM"
-            }
+            "type": "string"
         },
         "sqlVmNicName": {
-            "type": "string",
-            "metadata": {
-                "description": "NIC name to be used for SQL-VM"
-            }
+            "type": "string"
         },
         "adminUsername": {
-            "type": "string",
-            "metadata": {
-                "description": "Admin name to be used for SQL-VM"
-            }
+            "type": "string"
         },
         "adminPassword": {
-            "type": "string",
-            "metadata": {
-                "description": "Admin password to be used for SQL-VM"
-            }
-        },
-        "dataNsgName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the Network Security Group for the Data tier"
-            }
+            "type": "string"
         },
         "diagStorageAccountName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the diagnostic storage account"
-            }
+            "type": "string"
         },
         "storageAccountType": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the diagnostic storage account"
-            }
+            "type": "string"
         },
         "dataStorageAccountName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the diagnostic storage account"
-            }
+            "type": "string"
         },
         "vNetId": {
-            "type": "string",
-            "metadata": {
-                "description": "ID of the virtual network"
-            }
+            "type": "string"
         },
         "dataSubnetName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the subnet for the Data tier"
-            }
+            "type": "string"
         },
         "sqlVmSize": {
-            "type": "string",
-            "metadata": {
-                "description": "Size of the SQL-VM"
-            }
+            "type": "string"
         },
         "NetAppTags": {
-            "type": "object",
-            "metadata": {
-                "description": "Tags for NetApp"
-            }
+            "type": "object"
         },
         "quickstartTags": {
-            "type": "object",
-            "metadata": {
-                "description": "Tags for quick start templates"
-            }
+            "type": "object"
         }
     },
     "variables": {
@@ -173,6 +131,4 @@
             }
         }
     ]
-
-
 }

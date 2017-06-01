@@ -3,34 +3,19 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "adminUserName": {
-            "type": "string",
-            "metadata": {
-                "description": "Admin user name for the VMs"
-            }
+            "type": "string"
         },
         "adminPassword": {
-            "type": "securestring",
-            "metadata": {
-                "description": "Admin password for the VMs (A mix of upper and lower-case characters, digits and symbols)"
-            }
-        },
-        "jumpNsgName": {
-            "type": "string"
+            "type": "securestring"
         },
         "diagStorageAccountName": {
             "type": "string"
         },
         "storageAccountType": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the diagnostic storage account"
-            }
+            "type": "string"
         },
         "jumpStorageAccountName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the diagnostic storage account"
-            }
+            "type": "string"
         },
         "vnetID": {
             "type": "string"
@@ -132,7 +117,6 @@
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[parameters('jumpvmName')]",
             "location": "[resourceGroup().location]",
-            "comments": "OnCommand Manager VM",
             "tags": {
                 "quickstartName": "[parameters('quickstartTags').name]",
                 "provider": "[parameters('NetAppTags').provider]"
@@ -174,14 +158,11 @@
                 }
             }
         }
-
-
-
-    ]
-
-
-
-
-
-
+    ],
+"outputs": {
+    "jumpVmDNSLabel": {
+      "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses',parameters('jumpvmPublicIPAddressName'))).dnsSettings.fqdn]",
+      "type": "string"
+    }
+  }
 }
