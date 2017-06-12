@@ -17,11 +17,11 @@
         "sqlVmName": {
             "type": "string"
         },
-        "sqlDataVolumeSize": {
-            "type": "int"
-        },   
         "otcIp": {
             "type": "string"
+        },
+        "sqlDataVolumeSize": {
+            "type": "int"
         },
         "NetAppTags": {
             "type": "object"

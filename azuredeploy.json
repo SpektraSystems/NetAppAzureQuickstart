@@ -463,8 +463,7 @@
                         "value": "[parameters('sqlDataVolumeSize')]"
                     },                    
                     "otcIp": {
-                        "type": "string",
-                        "value": "[reference('netapp-oncommand-cloudmanager').outputs.NetAppOnCommandCloudManagerPublicIP.value]"
+                        "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses',variables('OnCommandCloudManagerpublicIPAddressName'))).ipAddress]"
                     },
                     "NetAppTags": {
                         "value": "[variables('NetAppTags')]"
