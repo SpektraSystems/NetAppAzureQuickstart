@@ -6,7 +6,7 @@ param(
     [String]$password,
     [Parameter(Mandatory=$true)]
     [String]$otcip,
-	[Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$true)]
     [decimal]$Capacity
 ) 
 
