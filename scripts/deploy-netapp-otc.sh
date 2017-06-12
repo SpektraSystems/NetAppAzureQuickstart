@@ -19,7 +19,7 @@ instanceType=${14}
 storageType=${15}
 QuickstartNameTagValue=${16}
 QuickstartProviderTagValue=${17}
-
+netappOntapVersion=${18}
 ##Variable Values for Setting up OnCommand Manager 
 tenantName="azurenetappqs_tenant"
 roleID="Role-1"
@@ -28,12 +28,26 @@ siteCompany="AzureQS"
 autoVsaCapacityManagement=true
 autoUpgrade=false
 ## Variable Values for Deploying Working Environment on Azure 
-svmPassword="'$adminPassword'"
-ontapVersion="ONTAP-9.1.T4.azure"
-sqlvolname="sqldatadrive"
-sqlvolsize="500"
 unit="GB"
-snapshotPolicyName="default"
+
+
+#Outputing the variables
+touch /tmp/inputlog.txt
+echo region $region >> /tmp/inputlog.txt
+echo otcName $otcName >> /tmp/inputlog.txt
+echo adminEmail $adminEmail >> /tmp/inputlog.txt
+echo subscriptionId $subscriptionId >> /tmp/inputlog.txt
+echo azureTenantId $azureTenantId >> /tmp/inputlog.txt
+echo applicationId $applicationId >> /tmp/inputlog.txt
+echo vnetID $vnetID >> /tmp/inputlog.txt
+echo cidr $cidr >> /tmp/inputlog.txt
+echo subnetID $subnetID >> /tmp/inputlog.txt
+echo nsgID $nsgID >> /tmp/inputlog.txt
+echo licenseType $licenseType >> /tmp/inputlog.txt
+echo instanceType $instanceType >> /tmp/inputlog.txt
+echo storageType $storageType >> /tmp/inputlog.txt
+echo QuickstartNameTagValue $QuickstartNameTagValue >> /tmp/inputlog.txt
+echo QuickstartProviderTagValue $QuickstartProviderTagValue >> /tmp/inputlog.txt
 
 ## Downloading jQuery 
 sudo wget -O /usr/bin/jq http://stedolan.github.io/jq/download/linux64/jq
@@ -41,27 +55,21 @@ sleep 5
 sudo chmod +x /usr/bin/jq
 
 ## Setup NetApp OnCommand Cloud Manager
-curl http://localhost/occm/api/occm/setup/init -X POST --header 'Content-Type:application/json' --header 'Referer:AzureQS' --data '{ "tenantRequest": { "name": "'${tenantName}'", "description": "", "costCenter": "", "nssKeys": {} }, "proxyUrl": { "uri": "" }, "userRequest":{  "email": "'${adminEmail}'","lastName": "user", "firstName":"admin","roleId": "'${roleID}'","password": "'${adminPassword}'", "ldap": "false", "azureCredentials": { "subscriptionId": "'${subscriptionId}'", "tenantId": "'${azureTenantId}'", "applicationId": "'${applicationId}'", "applicationKey": "'${applicationKey}'" }  }, "site": "'${siteName}'", "company": "'${siteCompany}'", "autoVsaCapacityManagement": "'${autoVsaCapacityManagement}'",   "autoUpgrade": "'${autoUpgrade}'" }}'
+curl http://localhost/occm/api/occm/setup/init -X POST --header 'Content-Type:application/json' --header 'Referer:AzureQS1' --data '{ "tenantRequest": { "name": "'${tenantName}'", "description": "", "costCenter": "", "nssKeys": {} }, "proxyUrl": { "uri": "" }, "userRequest":{  "email": "'${adminEmail}'","lastName": "user", "firstName":"admin","roleId": "'${roleID}'","password": "'${adminPassword}'", "ldap": "false", "azureCredentials": { "subscriptionId": "'${subscriptionId}'", "tenantId": "'${azureTenantId}'", "applicationId": "'${applicationId}'", "applicationKey": "'${applicationKey}'" }  }, "site": "'${siteName}'", "company": "'${siteCompany}'", "autoVsaCapacityManagement": "'${autoVsaCapacityManagement}'",   "autoUpgrade": "'${autoUpgrade}'" }}'
 sleep 40
 
 until sudo wget http://localhost/occmui > /dev/null 2>&1; do sudo wget http://localhost > /dev/null 2>&1 ; done
 sleep 60
 
 ## Authenticate to NetApp OnCommand CloudManager
-curl http://localhost/occm/api/auth/login --header 'Content-Type:application/json' --header 'Referer:AzureQS' --data '{"email":"'${adminEmail}'","password":"'${adminPassword}'"}' --cookie-jar cookies.txt
+curl http://localhost/occm/api/auth/login --header 'Content-Type:application/json' --header 'Referer:AzureQS1' --data '{"email":"'${adminEmail}'","password":"'${adminPassword}'"}' --cookie-jar cookies.txt
 sleep 5
 
 ## Getting the NetApp Tenant ID, to deploy the ONTAP Cloud
 tenantId=`sudo curl http://localhost/occm/api/tenants -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt | jq -r .[0].publicId`
 
 ## Create a ONTAP Cloud working environment on Azure
-## #old APi CALL# curl http://localhost/occm/api/azure/vsa/working-environments -X POST --cookie cookies.txt --header 'Content-Type:application/json' --header 'Referer:AzureQS' --data '{ "name": "'${otcName}'", "svmPassword": "'${svmPassword}'",  "vnetId": "'${vnetID}'",   "cidr": "'${cidr}'",  "description": "", "vsaMetadata": { "ontapVersion": "'${ontapVersion}'", "licenseType": "'${licenseType}'", "instanceType": "'${instanceType}'" }, "volume": { "name": "'${sqlvolname}'", "size": { "size": "'${sqlvolsize}'", "unit": "'${unit}'" }, "snapshotPolicyName": "'${snapshotPolicyName}'", "exportPolicyInfo": { "policyType": "custom", "ips": ["'${cidr}'"] }, "enableThinProvisioning": "'true'", "enableCompression": "false", "enableDeduplication": "false" }, "region": "'${region}'", "tenantId": "'${tenantId}'", "subnetId":"'${subnetID}'", "dataEncryptionType":"NONE", "ontapEncryptionParameters": null, "securityGroupId":"'${nsgID}'", "skipSnapshots": "false", "diskSize": { "size": "1","unit": "TB" }, "storageType": "'${storageType}'", "azureTags": [ { "tagKey": "'quickstartName'", "tagKey": "'${QuickstartNameTagValue}'"}, { "tagKey": "provider", "tagKey": "'${QuickstartProviderTagValue}'"} ],"writingSpeedState": "NORMAL" }' > /tmp/createnetappotc.txt
-#New API Call to create a ONTAP Cloud working environment on Azure
-curl http://localhost/occm/api/azure/vsa/working-environments -X POST  --header 'Content-Type:application/json' --cookie cookies.txt --data '{ "name": "'${otcName}'", "svmPassword": "'${svmPassword}'",  "vnetId": "'${vnetID}'",   "cidr": "'${cidr}'", "vsaMetadata": { "ontapVersion": "'${ontapVersion}'", "licenseType": "'${licenseType}'", "instanceType": "'${instanceType}'" },"tenantId": "'${tenantId}'","region": "'${region}'", "subnetId":"'${subnetID}'", "dataEncryptionType":"NONE", "skipSnapshots": "false", "diskSize": { "size": "1","unit": "TB" }, "storageType": "'${storageType}'", "azureTags": [],"writingSpeedState": "NORMAL" }' > /tmp/createnetappotc.txt
-
-
-## old API CAll Create a ONTAP Cloud working environment on Azure
-#curl http://localhost/occm/api/azure/vsa/working-environments -X POST --cookie cookies.txt --data '{ "name": "'${otcName}'", "svmPassword": "'${svmPassword}'",  "vnetId": "'${vnetID}'",   "cidr": "'${cidr}'", "vsaMetadata": { "ontapVersion": "'${ontapVersion}'", "licenseType": "'${licenseType}'", "instanceType": "'${instanceType}'" }, "volume": { "name": "'${sqlvolname}'", "size": { "size": "'${sqlvolsize}'", "unit": "'${unit}'" }, "snapshotPolicyName": "'${snapshotPolicyName}'", "exportPolicyInfo": { "policyType": "custom", "ips": ["'${cidr}'"] }, "enableThinProvisioning": "'true'", "enableCompression": "false", "enableDeduplication": "false" }, "region": "'${region}'", "tenantId": "'${tenantId}'", "subnetId":"'${subnetID}'", "dataEncryptionType":"NONE", "ontapEncryptionParameters": null, "securityGroupId":"'${nsgID}'", "skipSnapshots": "false", "diskSize": { "size": "1","unit": "TB" }, "storageType": "'${storageType}'", "azureTags": [ { "tagKey": "'quickstartName'", "tagKey": "'${QuickstartNameTagValue}'"}, { "tagKey": "provider", "tagKey": "'${QuickstartProviderTagValue}'"} ],"writingSpeedState": "NORMAL" }' > /tmp/createnetappotc.txt
+curl http://localhost/occm/api/azure/vsa/working-environments -X POST  --header 'Content-Type:application/json' --cookie cookies.txt --data '{ "name": "'${otcName}'", "svmPassword": "'${adminPassword}'",  "vnetId": "'${vnetID}'",   "cidr": "'${cidr}'", "vsaMetadata": { "ontapVersion": "'${netappOntapVersion}'", "licenseType": "'${licenseType}'", "instanceType": "'${instanceType}'" },"tenantId": "'${tenantId}'","region": "'${region}'", "subnetId":"'${subnetID}'", "dataEncryptionType":"NONE", "skipSnapshots": "false", "diskSize": { "size": "1","unit": "TB" }, "storageType": "'${storageType}'", "azureTags": [],"writingSpeedState": "NORMAL" }' > /tmp/createnetappotc.txt
 
 OtcPublicId=`cat /tmp/createnetappotc.txt | jq -r .publicId`
 if [ ${OtcPublicId} = null ] ; then
@@ -70,7 +78,6 @@ if [ ${OtcPublicId} = null ] ; then
   exit 1
 fi
 sleep 2
-
 
 ## Getting the NetApp Ontap Cloud Cluster Properties
 
@@ -85,17 +92,16 @@ otcstatus=`cat /tmp/envdetails.json | jq -r .status.status`
 
 until  [ ${otcstatus} = ON ] 
 do
-  message="Not Deployed Yet, Checking again in 60 seconds"
+  message="OTC not deployed yet, Checking again in 60 seconds"
   echo  ${message}
   sleep 60
   check_deploymentstatus
 done
-
 sleep 5
 
 curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=ontapClusterProperties' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt > /tmp/ontapClusterProperties.json
 
-## grab the Cluster managment LIF IP address
+## grab the Cluster managment LIF IP address and save in /tmp for refrence
 clusterLif=`curl 'http://localhost/occm/api/azure/vsa/working-environments/'${OtcPublicId}'?fields=ontapClusterProperties' -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt |jq -r .ontapClusterProperties.nodes[].lifs[] |grep "Cluster Management" -a2|head -1|cut -f4 -d '"'`
 echo "${clusterLif}" > /tmp/clusterLif.txt
 ## grab the iSCSI data LIF IP address
