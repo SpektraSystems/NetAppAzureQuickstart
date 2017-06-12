@@ -55,7 +55,7 @@
         },
         "_artifactsLocation": {
             "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/SpektraSystems/NetAppAzureQuickstart/master",
+            "defaultValue": "https://raw.githubusercontent.com/SpektraSystems/NetAppAzureQuickstart/jithin-netapp",
             "metadata": {
                 "description": "Leave default if insure, The base URI where artifacts required by this template are located. When the template is deployed using the accompanying scripts, a private location in the subscription will be used and this value will be automatically generated."
             }
@@ -463,7 +463,7 @@
                         "value": "[parameters('sqlDataVolumeSize')]"
                     },                    
                     "otcIp": {
-                        "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses',variables('OnCommandCloudManagerpublicIPAddressName'))).ipAddress]"
+                        "value": "[reference('netapp-oncommand-cloudmanager').outputs.NetAppOnCommandCloudManagerPublicIP.value]"
                     },
                     "NetAppTags": {
                         "value": "[variables('NetAppTags')]"
