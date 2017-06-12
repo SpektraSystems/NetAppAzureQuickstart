@@ -1,16 +1,56 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory=$true)]
-    [String]$AdminLIF,
+    [String]$email,
     [Parameter(Mandatory=$true)]
-    [String]$iScSILIF,
+    [String]$password,
     [Parameter(Mandatory=$true)]
-    [String]$SVMName,
-    [Parameter(Mandatory=$true)]
-    [String]$SVMPwd,
+    [String]$otcip,
 	[Parameter(Mandatory=$true)]
     [decimal]$Capacity
 ) 
+
+function Get-ONTAPClusterDetails([String]$email, [String]$password, [String]$otcip)
+{
+
+$authbody = @{
+    email = "${email}"
+    password = "${password}"
+}
+$authbodyjson = $authbody | ConvertTo-Json
+
+## Listing all URI used for API Calls 
+$uriauth = "http://$otcip/occm/api/auth/login"
+$urigetpublicid = "http://$otcip/occm/api/azure/vsa/working-environments"
+$urigetproperties = "http://$otcip/occm/api/azure/vsa/working-environments/${publicid?fields}?fields=ontapClusterProperties"
+$headers = @{"Referer"= "AzureQS1"}
+
+## Authenticating with Cloud Manager
+Invoke-RestMethod -Method Post -Headers $headers -Uri ${uriauth} -ContentType 'application/json' -Body $authbodyjson  -SessionVariable session 
+
+## Getting public id of NetApp ONTAP Cloud
+$publicidjson = Invoke-WebRequest -Method Get -Uri ${urigetpublicid} -ContentType 'application/json' -WebSession $session | ConvertFrom-Json
+$publicid = $publicidjson.publicId
+
+## Exporting Cluster Properties to C:\WindowsAzure\logs\netappotc.json
+Invoke-WebRequest -Method Get -Uri ${urigetproperties} -ContentType 'application/json' -WebSession $session -OutFile C:\WindowsAzure\logs\netappotc.json
+
+## Getting Cluster Properties in Variable
+$ontapclusterproperties = Invoke-WebRequest -Method Get -Uri ${urigetproperties} -ContentType 'application/json' -WebSession $session | convertfrom-json 
+ 
+## Extracting IP Address for AdminLif, iSCSILIF and SCVMName
+$AdminLIF = $ontapclusterproperties.ontapclusterproperties.nodes.lifs.ip | Select-Object -index 0
+$iScSILIF = $ontapclusterproperties.ontapclusterproperties.nodes.lifs.ip | Select-Object -index 3
+$SVMName = $ontapclusterproperties.svmname
+
+## Echo all values
+echo "Admin Lif IP is $AdminLIF"
+echo "iSCSI Lif IP is $iScSILIF"
+echo "svm Name is is $SVMName"
+
+## Ip fetching complete, starting connect function
+
+}
 
 function Connect-ONTAP([String]$AdminLIF, [String]$iScSILIF, [String]$SVMName,[String]$SVMPwd, [decimal]$Capacity)
 {
@@ -18,7 +58,7 @@ function Connect-ONTAP([String]$AdminLIF, [String]$iScSILIF, [String]$SVMName,[S
 
     try {
     
-        Start-Transcript -Path C:\cfn\log\WinEC2_Connect_Storage.ps1.txt -Append
+        Start-Transcript -Path C:\WindowsAzure\Logs\AzureSQLVM_Connect_Storage.ps1.txt -Append
     
         Write-Output "Started @ $(Get-Date)"
         Write-Output "Admin Lif: $AdminLIF"
@@ -164,12 +204,6 @@ function Start-ThisService([String]$ServiceName)
     Set-MultiPathIO
     Start-ThisService "MSiSCSI"
  }
-
-
-$msifile= 'NetApp_PowerShell_Toolkit_4.3.0.msi' 
-$arguments= ' /quiet ' 
-Start-Process `
-     -file  $msifile `
-     -arg $arguments `
-     -passthru | Wait-Process
+$SVMPwd = $password
+Get-ONTAPClusterDetails $email $password $otcip
 Connect-ONTAP $AdminLIF $iScSILIF $SVMName $SVMPwd $Capacity
