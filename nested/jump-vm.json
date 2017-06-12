@@ -20,7 +20,7 @@
         "vnetID": {
             "type": "string"
         },
-        "jumpSubnetName": {
+        "webSubnetName": {
             "type": "string"
         },
         "jumpVmName": {
@@ -50,8 +50,7 @@
         "vmStorageAccountContainerName": "vhds",
         "OSDiskName": "jump-vm-osdisk"
     },
-    "resources": [
-        {
+    "resources": [{
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[parameters('jumpStorageAccountName')]",
             "apiVersion": "2017-06-01",
@@ -106,7 +105,7 @@
                             "id": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('jumpvmpublicIPAddressName'))]"
                         },
                         "subnet": {
-                            "id": "[concat(parameters('vnetID'), '/subnets/', parameters('jumpSubnetName'))]"
+                            "id": "[concat(parameters('vnetID'), '/subnets/', parameters('webSubnetName'))]"
                         }
                     }
                 }]
@@ -159,10 +158,10 @@
             }
         }
     ],
-"outputs": {
-    "jumpVmDNSLabel": {
-      "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses',parameters('jumpvmPublicIPAddressName'))).dnsSettings.fqdn]",
-      "type": "string"
+    "outputs": {
+        "jumpVmDNSLabel": {
+            "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses',parameters('jumpvmPublicIPAddressName'))).dnsSettings.fqdn]",
+            "type": "string"
+        }
     }
-  }
 }

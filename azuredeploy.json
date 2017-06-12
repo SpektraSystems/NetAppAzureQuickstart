@@ -5,24 +5,25 @@
         "adminUsername": {
             "type": "string",
             "metadata": {
-                "description": "User name for onCommandManager VM OS Login"
+                "description": "User name used for all VM's OS login"
             }
         },
         "adminEmailAddress": {
             "type": "string",
             "metadata": {
-                "description": "Admin Email Address, used by NetApp OnCommand Manager Login"
+                "description": "Admin Email Address, used for NetApp OnCommand Manager GUI Login"
             }
         },
         "adminPassword": {
             "type": "securestring",
             "minLength": 12,
             "metadata": {
-                "description": "Password for the user of Virtual Machine. Used for onCommandManager."
+                "description": "Password used for VM Login, OnCommand Manager Portal Login and ONTAP SVM Password."
             }
         },
         "netappOntapCloudLicenseType": {
             "type": "string",
+            "defaultValue": "Standard",
             "allowedValues": [
                 "Standard",
                 "Premium"
@@ -34,27 +35,35 @@
         "azureADApplicationID": {
             "type": "string",
             "metadata": {
-                "description": "App ID."
+                "description": "Azure AD App ID, Check deployment guide for permissions required"
             }
         },
         "azureADApplicationSecret": {
             "type": "securestring",
             "minLength": 12,
             "metadata": {
-                "description": "App Secret."
+                "description": "AD App Secret."
+            }
+        },
+        "sqlDataVolumeSize": {
+            "type": "int",
+            "minvalue": 100,
+            "maxvalue": 2000,
+            "metadata": {
+                "description": "SQL Data volume size"
             }
         },
         "_artifactsLocation": {
             "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/SpektraSystems/NetAppAzureQuickstart/master",
+            "defaultValue": "https://raw.githubusercontent.com/SpektraSystems/NetAppAzureQuickstart/jithin-netapp",
             "metadata": {
-                "description": "The base URI where artifacts required by this template are located. When the template is deployed using the accompanying scripts, a private location in the subscription will be used and this value will be automatically generated."
+                "description": "Leave default if insure, The base URI where artifacts required by this template are located. When the template is deployed using the accompanying scripts, a private location in the subscription will be used and this value will be automatically generated."
             }
         },
         "_artifactsLocationSasToken": {
             "type": "securestring",
             "metadata": {
-                "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated.Leave blank if unsure"
+                "description": "Leave blank if insure, The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated.Leave blank if unsure"
             },
             "defaultValue": ""
         },
@@ -70,7 +79,6 @@
     "variables": {
         "webNsgName": "web-nsg",
         "dataNsgName": "data-nsg",
-        "jumpNsgName": "jump-nsg",
         "webStorageAccountName": "[concat('webst',uniqueString(resourceGroup().id))]",
         "dataStorageAccountName": "[concat('datast',uniqueString(resourceGroup().id))]",
         "jumpStorageAccountName": "[concat('jumpst',uniqueString(resourceGroup().id))]",
@@ -79,12 +87,10 @@
         "virtualNetworkName": "netapp-vnet",
         "vNetId": "[resourceId(concat('Microsoft.Network','/','virtualNetworks'),variables('virtualNetworkName'))]",
         "dataSubnetName": "data-subnet",
-        "jumpSubnetName": "jump-subnet",
         "webSubnetName": "web-subnet",
         "addressPrefix": "10.0.0.0/16",
         "webSubnetPrefix": "10.0.1.0/24",
         "dataSubnetPrefix": "10.0.2.0/24",
-        "jumpSubnetPrefix": "10.0.3.0/24",
         "OnCommandCloudManagerpublicIPAddressName": "oncommand-cloudmanager-pip",
         "OnCommandCloudManagerDnsName": "[concat('oncommand',uniqueString(resourceGroup().id))]",
         "OnCommandCloudManagerVmNicName": "oncommand-cloudmanager-nic",
@@ -102,22 +108,21 @@
         "JumpVMTemplateFileName": "jump-vm.json",
         "netAppOnCommandCloudManagerVMTemplateFileName": "netapp-oncommand-cloudmanager.json",
         "netAppOntapCloudTemplateFileName": "netapp-ontap-cloud.json",
-        "sqlCustomScriptTemplateFileName": "sql-netappotc-config.json",
+        "sqlCustomScriptTemplateFileName": "sql-netappotc-connect.json",
         "sqlVMTemplateFileName": "sql-vm.json",
-        "netappOntapCloudLicenseStandard":
-            {
-                "type": "object",
-                "licenseType" : "azure-cot-standard-paygo",
-                "instanceType" : "Standard_DS4_v2",
-                "storageType": "Standard_LRS"
-            },
-        "netappOntapCloudLicensePremium":
-            {
-                "type": "object",
-                "licenseType" : "azure-cot-premium-paygo",
-                "instanceType" : "Standard_DS5_v2",
-                "storageType": "Premium_LRS"
-            },        
+        "netappOntapCloudLicenseStandard": {
+            "type": "object",
+            "licenseType": "azure-cot-standard-paygo",
+            "instanceType": "Standard_DS4_v2",
+            "storageType": "Standard_LRS"
+        },
+        "netappOntapCloudLicensePremium": {
+            "type": "object",
+            "licenseType": "azure-cot-premium-paygo",
+            "instanceType": "Standard_DS5_v2",
+            "storageType": "Premium_LRS"
+        },
+        "netappOntapVersion": "ONTAP-9.1.T4.azure",
         "NetAppTags": {
             "type": "object",
             "provider": "IDToBeDetermined"
@@ -145,9 +150,6 @@
                     "dataNsgName": {
                         "value": "[variables('dataNsgName')]"
                     },
-                    "jumpNsgName": {
-                        "value": "[variables('jumpNsgName')]"
-                    },
                     "diagStorageAccountName": {
                         "value": "[variables('diagStorageAccountName')]"
                     },
@@ -160,9 +162,6 @@
                     "dataSubnetName": {
                         "value": "[variables('dataSubnetName')]"
                     },
-                    "jumpSubnetName": {
-                        "value": "[variables('jumpSubnetName')]"
-                    },
                     "webSubnetName": {
                         "value": "[variables('webSubnetName')]"
                     },
@@ -174,9 +173,6 @@
                     },
                     "dataSubnetPrefix": {
                         "value": "[variables('dataSubnetPrefix')]"
-                    },
-                    "jumpSubnetPrefix": {
-                        "value": "[variables('jumpSubnetPrefix')]"
                     },
                     "remoteAllowedCIDR": {
                         "value": "[parameters('remoteAllowedCIDR')]"
@@ -223,8 +219,8 @@
                     "vNetId": {
                         "value": "[variables('vNetId')]"
                     },
-                    "jumpSubnetName": {
-                        "value": "[variables('jumpSubnetName')]"
+                    "webSubnetName": {
+                        "value": "[variables('webSubnetName')]"
                     },
                     "jumpVmName": {
                         "value": "[variables('JumpVmName')]"
@@ -294,6 +290,12 @@
                     },
                     "sqlVmSize": {
                         "value": "[variables('sqlVmSize')]"
+                    },
+                    "_artifactsLocation": {
+                        "value": "[parameters('_artifactsLocation')]"
+                    },
+                    "_artifactsLocationSasToken": {
+                        "value": "[parameters('_artifactsLocationSasToken')]"
                     },
                     "NetAppTags": {
                         "value": "[variables('NetAppTags')]"
@@ -408,13 +410,16 @@
                     },
                     "netappOntapCloudLicense": {
                         "value": "[variables(concat('netappOntapCloudLicense',parameters('netappOntapCloudLicenseType')))]"
-                    },   
+                    },
+                    "netappOntapVersion": {
+                        "value": "[variables('netappOntapVersion')]"
+                    },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
                     },
                     "_artifactsLocationSasToken": {
                         "value": "[parameters('_artifactsLocationSasToken')]"
-                    },        
+                    },
                     "NetAppTags": {
                         "value": "[variables('NetAppTags')]"
                     },
@@ -425,7 +430,7 @@
             }
         },
         {
-            "name": "sql-netappotc-config",
+            "name": "sql-netappotc-connect",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-09-01",
             "comments": "",
@@ -439,6 +444,9 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
+                    "adminEmailAddress": {
+                        "value": "[parameters('adminEmailAddress')]"
+                    },
                     "adminPassword": {
                         "value": "[parameters('adminPassword')]"
                     },
@@ -450,6 +458,12 @@
                     },
                     "sqlVmName": {
                         "value": "[variables('sqlVmName')]"
+                    },
+                    "sqlDataVolumeSize": {
+                        "value": "[parameters('sqlDataVolumeSize')]"
+                    },                    
+                    "otcIp": {
+                        "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses',variables('OnCommandCloudManagerpublicIPAddressName'))).ipAddress]"
                     },
                     "NetAppTags": {
                         "value": "[variables('NetAppTags')]"

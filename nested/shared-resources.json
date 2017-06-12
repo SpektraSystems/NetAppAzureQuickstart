@@ -8,9 +8,6 @@
         "dataNsgName": {
             "type": "string"
         },
-        "jumpNsgName": {
-            "type": "string"
-        },
         "diagStorageAccountName": {
             "type": "string"
         },
@@ -21,9 +18,6 @@
             "type": "string"
         },
         "dataSubnetName": {
-            "type": "string"
-        },
-        "jumpSubnetName": {
             "type": "string"
         },
         "webSubnetName": {
@@ -38,9 +32,6 @@
         "dataSubnetPrefix": {
             "type": "string"
         },
-        "jumpSubnetPrefix": {
-            "type": "string"
-        },
         "remoteAllowedCIDR": {
             "type": "string"
         },
@@ -51,8 +42,7 @@
             "type": "object"
         }
     },
-    "variables": {
-    },
+    "variables": {},
     "resources": [{
             "type": "Microsoft.Network/networkSecurityGroups",
             "name": "[parameters('webNSGName')]",
@@ -66,19 +56,48 @@
             },
             "properties": {
                 "securityRules": [{
-                    "name": "httpRule",
-                    "properties": {
-                        "description": "Allow HTTP",
-                        "protocol": "Tcp",
-                        "sourcePortRange": "*",
-                        "destinationPortRange": "80",
-                        "sourceAddressPrefix": "[parameters('remoteAllowedCIDR')]",
-                        "destinationAddressPrefix": "[parameters('webSubnetPrefix')]",
-                        "access": "Allow",
-                        "priority": 100,
-                        "direction": "Inbound"
+                        "name": "httpRule",
+                        "properties": {
+                            "description": "Allow HTTP",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "80",
+                            "sourceAddressPrefix": "[parameters('remoteAllowedCIDR')]",
+                            "destinationAddressPrefix": "[parameters('webSubnetPrefix')]",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "sshRule",
+                        "properties": {
+                            "description": "Allow SSH",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "[parameters('webSubnetPrefix')]",
+                            "destinationAddressPrefix": "[parameters('webSubnetPrefix')]",
+                            "access": "Allow",
+                            "priority": 120,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "rdpRule",
+                        "properties": {
+                            "description": "Allow RDP",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "3389",
+                            "sourceAddressPrefix": "[parameters('remoteAllowedCIDR')]",
+                            "destinationAddressPrefix": "[parameters('webSubnetPrefix')]",
+                            "access": "Allow",
+                            "priority": 110,
+                            "direction": "Inbound"
+                        }
                     }
-                }]
+                ]
             }
         },
         {
@@ -93,34 +112,6 @@
                 "provider": "[parameters('NetAppTags').provider]"
             },
             "properties": {}
-        },
-        {
-            "type": "Microsoft.Network/networkSecurityGroups",
-            "name": "[parameters('jumpNSGName')]",
-            "apiVersion": "2016-03-30",
-            "location": "[resourceGroup().location]",
-            "comments": " NSG for Jump subnet",
-            "tags": {
-                "displayName": "Jump NSG",
-                "quickstartName": "[parameters('quickstartTags').name]",
-                "provider": "[parameters('NetAppTags').provider]"
-            },
-            "properties": {
-                "securityRules": [{
-                    "name": "rdpRule",
-                    "properties": {
-                        "description": "Allow RDP",
-                        "protocol": "Tcp",
-                        "sourcePortRange": "*",
-                        "destinationPortRange": "3389",
-                        "sourceAddressPrefix": "[parameters('remoteAllowedCIDR')]",
-                        "destinationAddressPrefix": "[parameters('jumpSubnetPrefix')]",
-                        "access": "Allow",
-                        "priority": 100,
-                        "direction": "Inbound"
-                    }
-                }]
-            }
         },
         {
             "type": "Microsoft.Storage/storageAccounts",
@@ -154,7 +145,6 @@
             },
             "dependsOn": [
                 "[concat('Microsoft.Network/networkSecurityGroups/', parameters('webNSGName'))]",
-                "[concat('Microsoft.Network/networkSecurityGroups/', parameters('jumpNsgName'))]",
                 "[concat('Microsoft.Network/networkSecurityGroups/', parameters('dataNsgName'))]"
             ],
             "properties": {
@@ -164,15 +154,6 @@
                     ]
                 },
                 "subnets": [{
-                        "name": "[parameters('jumpSubnetName')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('jumpSubnetPrefix')]",
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('jumpNsgName'))]"
-                            }
-                        }
-                    },
-                    {
                         "name": "[parameters('webSubnetName')]",
                         "properties": {
                             "addressPrefix": "[parameters('webSubnetPrefix')]",

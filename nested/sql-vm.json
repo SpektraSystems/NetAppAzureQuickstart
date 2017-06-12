@@ -37,15 +37,20 @@
         },
         "quickstartTags": {
             "type": "object"
+        },
+        "_artifactsLocation": {
+            "type": "string"
+        },
+        "_artifactsLocationSasToken": {
+            "type": "string"
         }
     },
     "variables": {
         "vmStorageAccountContainerName": "vhds",
-        "publicIPAddressType": "Dynamic",
-        "OSDiskName": "sql-vm-osdisk"
+        "OSDiskName": "sql-vm-osdisk",
+        "psToolkitFileName": "NetApp_PowerShell_Toolkit_4.3.0.msi"
     },
-    "resources": [
-        {
+    "resources": [{
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[parameters('dataStorageAccountName')]",
             "apiVersion": "2017-06-01",
@@ -128,7 +133,34 @@
                         "id": "[resourceId('Microsoft.Network/networkInterfaces',parameters('sqlVmNicName'))]"
                     }]
                 }
-            }
+            },
+            "resources": [{
+                "type": "Microsoft.Compute/virtualMachines/extensions",
+                "name": "[concat(parameters('sqlVmName'),'/','netapppstinstallation')]",
+                "apiVersion": "2016-03-30",
+                "location": "[resourceGroup().location]",
+                "dependsOn": [
+                    "[concat('Microsoft.Compute/virtualMachines/',parameters('sqlVmName'))]"
+                ],
+                "tags": {
+                    "quickstartName": "[parameters('quickstartTags').name]",
+                    "provider": "[parameters('NetAppTags').provider]"
+                },
+                "properties": {
+                    "publisher": "Microsoft.Compute",
+                    "type": "CustomScriptExtension",
+                    "typeHandlerVersion": "1.8",
+                    "autoUpgradeMinorVersion": true,
+                    "settings": {
+                        "fileUris": [
+                            "[concat(parameters('_artifactsLocation'),'/scripts/',variables('psToolkitFileName'),parameters('_artifactsLocationSasToken'))]"
+                        ],
+                        "commandToExecute": "start /wait msiexec.exe /i NetApp_PowerShell_Toolkit_4.3.0.msi /qn ADDLOCAL=F.PSTKDOT"
+                    }
+                }
+            }]
+
         }
+
     ]
 }
