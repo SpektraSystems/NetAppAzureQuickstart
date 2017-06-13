@@ -50,7 +50,7 @@
             "minvalue": 100,
             "maxvalue": 2000,
             "metadata": {
-                "description": "SQL Data volume size"
+                "description": "SQL Data volume size in GB, Min 100, Max 2000"
             }
         },
         "_artifactsLocation": {
