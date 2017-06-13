@@ -5,12 +5,12 @@ param(
     [Parameter(Mandatory=$true)]
     [String]$password,
     [Parameter(Mandatory=$true)]
-    [String]$otcip,
+    [String]$ocmip,
     [Parameter(Mandatory=$true)]
     [decimal]$Capacity
 ) 
 
-function Get-ONTAPClusterDetails([String]$email, [String]$password, [String]$otcip)
+function Get-ONTAPClusterDetails([String]$email, [String]$password, [String]$ocmip)
 {
 
 $authbody = @{
@@ -20,9 +20,9 @@ $authbody = @{
 $authbodyjson = $authbody | ConvertTo-Json
 
 ## Listing all URI used for API Calls 
-$uriauth = "http://$otcip/occm/api/auth/login"
-$urigetpublicid = "http://$otcip/occm/api/azure/vsa/working-environments"
-$urigetproperties = "http://$otcip/occm/api/azure/vsa/working-environments/${publicid?fields}?fields=ontapClusterProperties"
+$uriauth = "http://$ocmip/occm/api/auth/login"
+$urigetpublicid = "http://$ocmip/occm/api/azure/vsa/working-environments"
+$urigetproperties = "http://$ocmip/occm/api/azure/vsa/working-environments/${publicid?fields}?fields=ontapClusterProperties"
 $headers = @{"Referer"= "AzureQS1"}
 
 ## Authenticating with Cloud Manager
