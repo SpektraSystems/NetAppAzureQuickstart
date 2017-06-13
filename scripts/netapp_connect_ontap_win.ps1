@@ -58,7 +58,7 @@ function Connect-ONTAP([String]$AdminLIF, [String]$iScSILIF, [String]$SVMName,[S
 
     try {
     
-        Start-Transcript -Path C:\WindowsAzure\Logs\AzureSQLVM_Connect_Storage.ps1.txt -Append
+        Start-Transcript -Path C:\cfn\log\WinEC2_Connect_Storage.ps1.txt -Append
     
         Write-Output "Started @ $(Get-Date)"
         Write-Output "Admin Lif: $AdminLIF"
@@ -73,7 +73,7 @@ function Connect-ONTAP([String]$AdminLIF, [String]$iScSILIF, [String]$SVMName,[S
 
         Setup-VM
 
-        $IqnName = "azureqsiqn"
+        $IqnName = "awsqsiqn"
         $SecPasswd = ConvertTo-SecureString $SVMPwd -AsPlainText -Force
         $SvmCreds = New-Object System.Management.Automation.PSCredential ("admin", $SecPasswd)
         $VMIqn = (get-initiatorPort).nodeaddress
@@ -204,6 +204,8 @@ function Start-ThisService([String]$ServiceName)
     Set-MultiPathIO
     Start-ThisService "MSiSCSI"
  }
+
+
 
 # Function for Loading Sample Adventure works database on NetApp 
 function Load-SampleDatabase
