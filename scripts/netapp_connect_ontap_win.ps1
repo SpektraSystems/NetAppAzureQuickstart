@@ -39,9 +39,9 @@ Invoke-WebRequest -Method Get -Uri ${urigetproperties} -ContentType 'application
 $ontapclusterproperties = Invoke-WebRequest -Method Get -Uri ${urigetproperties} -ContentType 'application/json' -WebSession $session | convertfrom-json 
  
 ## Extracting IP Address for AdminLif, iSCSILIF and SCVMName
-$Global:AdminLIF = $ontapclusterproperties.ontapclusterproperties.nodes.lifs.ip | Select-Object -index 0
-$Global:iScSILIF = $ontapclusterproperties.ontapclusterproperties.nodes.lifs.ip | Select-Object -index 3
-$Global:SVMName = $ontapclusterproperties.svmname
+$AdminLIF = $ontapclusterproperties.ontapclusterproperties.nodes.lifs.ip | Select-Object -index 0
+$iScSILIF = $ontapclusterproperties.ontapclusterproperties.nodes.lifs.ip | Select-Object -index 3
+$SVMName = $ontapclusterproperties.svmname
 
 ## Echo all values
 echo "Admin Lif IP is $AdminLIF"
@@ -204,6 +204,88 @@ function Start-ThisService([String]$ServiceName)
     Set-MultiPathIO
     Start-ThisService "MSiSCSI"
  }
+
+# Function for Loading Sample Adventure works database on NetApp 
+function Load-SampleDatabase
+{
+## Creating SQL directory structure on NetApp drives
+$DataDirectory = "F:\SQL\DATA"
+$LogDirectory = "G:\SQL\Logs"
+$BackupDirectory = "F:\SQL\BACKUPS"
+
+function Create-DirectoryStructure
+{
+New-Item -ItemType directory -Path $DataDirectory
+New-Item -ItemType directory -Path $LogDirectory
+New-Item -ItemType directory -Path $BackupDirectory
+
+}
+
+## Setting default location of database, logs and backup files to NetApp Drives.
+function Set-SQLDataLocation
+{
+$DataRegKeyPath = "HKLM:\Software\Microsoft\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQLServer"
+$DataRegKeyName = "DefaultData"
+If ((Get-ItemProperty -Path $DataRegKeyPath -Name $DataRegKeyName -ErrorAction SilentlyContinue) -eq $null) {
+  New-ItemProperty -Path $DataRegKeyPath -Name $DataRegKeyName -PropertyType String -Value $DataDirectory
+} Else {
+  Set-ItemProperty -Path $DataRegKeyPath -Name $DataRegKeyName -Value $DataDirectory
+}
+ 
+$LogRegKeyPath = "HKLM:\Software\Microsoft\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQLServer"
+$LogRegKeyName = "DefaultLog"
+If ((Get-ItemProperty -Path $LogRegKeyPath -Name $LogRegKeyName -ErrorAction SilentlyContinue) -eq $null) {
+  New-ItemProperty -Path $LogRegKeyPath -Name $LogRegKeyName -PropertyType String -Value $LogDirectory
+} Else {
+  Set-ItemProperty -Path $LogRegKeyPath -Name $LogRegKeyName -Value $LogDirectory
+}
+ 
+$BackupRegKeyPath = "HKLM:\Software\Microsoft\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQLServer"
+$BackupRegKeyName = "BackupDirectory"
+
+If ((Get-ItemProperty -Path $BackupRegKeyPath -Name $BackupRegKeyName -ErrorAction SilentlyContinue) -eq $null) {
+  New-ItemProperty -Path $BackupRegKeyPath -Name $BackupRegKeyName -PropertyType String -Value $BackupDirectory
+} Else {
+  Set-ItemProperty -Path $BackupRegKeyPath -Name $BackupRegKeyName -Value $BackupDirectory
+}
+}
+# Downloading and extracting AdventureWorks2014 DB 
+
+function Download-SampleDatabase
+{
+wget https://msftdbprodsamples.codeplex.com/downloads/get/880661 -OutFile $BackupDirectory\AdventureWorks2014bakzip.zip
+
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+
+function Unzip
+{
+    param([string]$zipfile, [string]$outpath)
+
+    [System.IO.Compression.ZipFile]::ExtractToDirectory($zipfile, $outpath)
+}
+
+Unzip $BackupDirectory\AdventureWorks2014bakzip.zip $BackupDirectory
+
+}
+
+# Restoring DB into SQL
+function Restore-Database
+{
+Invoke-Sqlcmd -Query "USE [master] RESTORE DATABASE AdventureWorks2014 FROM disk= 'F:\SQL\BACKUPS\AdventureWorks2014.bak' WITH MOVE 'AdventureWorks2014_data' TO 'F:\SQL\DATA\AdventureWorks2014.mdf', MOVE 'AdventureWorks2014_Log' TO 'G:\SQL\LOGS\AdventureWorks2014.ldf', REPLACE" 
+}
+
+Create-DirectoryStructure
+Set-SQLDataLocation
+Restart-Service -Force MSSQLSERVER
+Download-SampleDatabase
+Restore-Database
+
+}
+
+
+## Starting functions execution
+
 $SVMPwd = $password
 Get-ONTAPClusterDetails $email $password $otcip
 Connect-ONTAP $AdminLIF $iScSILIF $SVMName $SVMPwd $Capacity
+Load-SampleDatabase
