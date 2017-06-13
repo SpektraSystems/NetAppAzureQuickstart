@@ -286,6 +286,6 @@ Restore-Database
 ## Starting functions execution
 
 $SVMPwd = $password
-Get-ONTAPClusterDetails $email $password $otcip
+Get-ONTAPClusterDetails $email $password $ocmip
 Connect-ONTAP $AdminLIF $iScSILIF $SVMName $SVMPwd $Capacity
 Load-SampleDatabase
