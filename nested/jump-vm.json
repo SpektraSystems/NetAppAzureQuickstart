@@ -174,7 +174,7 @@
                     "typeHandlerVersion": "1.8",
                     "autoUpgradeMinorVersion": true,
                     "settings": {
-                        "commandToExecute": "[concat('REG.exe',' ','Add',' ','HKCU\Software\Microsoft\ServerManager',' ','/V',' ','DoNotOpenServerManagerAtLogon',' ','/t',' ','REG_DWORD',' ','/D',' ','0x1',' ','/F')]"
+                        "commandToExecute": "[concat('REG.exe',' ','Add',' ','"HKCU\Software\Microsoft\ServerManager"',' ','"/V"',' ','DoNotOpenServerManagerAtLogon',' ','/t',' ','REG_DWORD',' ','/D',' ','0x1',' ','/F')]"
                     }
                 }
             }]
