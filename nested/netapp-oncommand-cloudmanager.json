@@ -47,7 +47,7 @@
   },
   "variables": {
     "OSDiskName": "netapp-oncommandmanagervm-osdisk",
-    "publicIPAddressType": "Dynamic",
+    "publicIPAddressType": "Static",
     "vmStorageAccountContainerName": "vhds"
   },
   "resources": [
