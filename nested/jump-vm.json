@@ -155,29 +155,7 @@
                         "id": "[resourceId('Microsoft.Network/networkInterfaces',parameters('jumpvmNicName'))]"
                     }]
                 }
-            },
-            "resources": [{
-                "type": "Microsoft.Compute/virtualMachines/extensions",
-                "name": "[concat(parameters('jumpVmName'),'/','disableservermanager')]",
-                "apiVersion": "2016-03-30",
-                "location": "[resourceGroup().location]",
-                "dependsOn": [
-                    "[concat('Microsoft.Compute/virtualMachines/',parameters('jumpVmName'))]"
-                ],
-                "tags": {
-                    "quickstartName": "[parameters('quickstartTags').name]",
-                    "provider": "[parameters('NetAppTags').provider]"
-                },
-                "properties": {
-                    "publisher": "Microsoft.Compute",
-                    "type": "CustomScriptExtension",
-                    "typeHandlerVersion": "1.8",
-                    "autoUpgradeMinorVersion": true,
-                    "settings": {
-                        "commandToExecute": "New-ItemProperty -Path HKCU:\\Software\\Microsoft\\ServerManager -Name DoNotOpenServerManagerAtLogon -PropertyType DWORD -Value \'0x1\' –Force"
-                    }
-                }
-            }]
+            }
         }
     ],
     "outputs": {
