@@ -26,17 +26,17 @@ $urigetproperties = "http://$ocmip/occm/api/azure/vsa/working-environments/${pub
 $headers = @{"Referer"= "AzureQS1"}
 
 ## Authenticating with Cloud Manager
-Invoke-RestMethod -Method Post -Headers $headers -Uri ${uriauth} -ContentType 'application/json' -Body $authbodyjson  -SessionVariable session 
+Invoke-RestMethod -Method Post -Headers $headers -Uri ${uriauth} -ContentType 'application/json' -Body $authbodyjson  -SessionVariable session -UseBasicParsing 
 
 ## Getting public id of NetApp ONTAP Cloud
-$publicidjson = Invoke-WebRequest -Method Get -Uri ${urigetpublicid} -ContentType 'application/json' -WebSession $session | ConvertFrom-Json
+$publicidjson = Invoke-WebRequest -Method Get -Uri ${urigetpublicid} -ContentType 'application/json' -WebSession $session -UseBasicParsing | ConvertFrom-Json
 $publicid = $publicidjson.publicId
 
 ## Exporting Cluster Properties to C:\WindowsAzure\logs\netappotc.json
-Invoke-WebRequest -Method Get -Uri ${urigetproperties} -ContentType 'application/json' -WebSession $session -OutFile C:\WindowsAzure\logs\netappotc.json
+Invoke-WebRequest -Method Get -Uri ${urigetproperties} -ContentType 'application/json' -WebSession $session -UseBasicParsing -OutFile C:\WindowsAzure\logs\netappotc.json
 
 ## Getting Cluster Properties in Variable
-$ontapclusterproperties = Invoke-WebRequest -Method Get -Uri ${urigetproperties} -ContentType 'application/json' -WebSession $session | convertfrom-json 
+$ontapclusterproperties = Invoke-WebRequest -Method Get -Uri ${urigetproperties} -ContentType 'application/json' -UseBasicParsing -WebSession $session | convertfrom-json 
  
 ## Extracting IP Address for AdminLif, iSCSILIF and SCVMName
 $Global:AdminLIF = $ontapclusterproperties.ontapclusterproperties.nodes.lifs.ip | Select-Object -index 0
