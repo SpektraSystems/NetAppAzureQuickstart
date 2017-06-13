@@ -39,9 +39,9 @@ Invoke-WebRequest -Method Get -Uri ${urigetproperties} -ContentType 'application
 $ontapclusterproperties = Invoke-WebRequest -Method Get -Uri ${urigetproperties} -ContentType 'application/json' -WebSession $session | convertfrom-json 
  
 ## Extracting IP Address for AdminLif, iSCSILIF and SCVMName
-$AdminLIF = $ontapclusterproperties.ontapclusterproperties.nodes.lifs.ip | Select-Object -index 0
-$iScSILIF = $ontapclusterproperties.ontapclusterproperties.nodes.lifs.ip | Select-Object -index 3
-$SVMName = $ontapclusterproperties.svmname
+$Global:AdminLIF = $ontapclusterproperties.ontapclusterproperties.nodes.lifs.ip | Select-Object -index 0
+$Global:iScSILIF = $ontapclusterproperties.ontapclusterproperties.nodes.lifs.ip | Select-Object -index 3
+$Global:SVMName = $ontapclusterproperties.svmname
 
 ## Echo all values
 echo "Admin Lif IP is $AdminLIF"
