@@ -176,6 +176,7 @@
       "type": "string"
     },
     "NetAppOnCommandCloudManagerPublicIP": {
+      "type": "string",
       "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses',parameters('OnCommandCloudManagerpublicIPAddressName'))).ipAddress]"
     }
  }
