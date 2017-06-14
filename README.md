@@ -45,3 +45,8 @@ This template will deploy:
 
 Azure Subscription with specified payment method (NetApp ONTAP cloud is a market place product and requires payment method to be specified in Azure Subscription)
 
+## Deployment Steps  
+
+Build your NetApp ONTAP environment on Azure in a few simple steps:  
+- Launch the Template by click on Deploy to Azure button.  
+- Fill in all the required parameter values. Accept the terms and condition and click on Purchase. 
