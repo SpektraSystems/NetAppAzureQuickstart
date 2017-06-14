@@ -23,3 +23,5 @@ NetApp ONTAP Cloud on Azure Quickstart
 
 
 <!-- /TOC -->
+
+## Solution Overview 
