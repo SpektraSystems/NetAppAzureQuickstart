@@ -41,3 +41,7 @@ This template will deploy:
 
 ## Licenses and Costs 
 
+## Prerequisites 
+
+Azure Subscription with specified payment method (NetApp ONTAP cloud is a market place product and requires payment method to be specified in Azure Subscription)
+
