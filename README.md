@@ -41,6 +41,8 @@ This template will deploy:
 
 ## Licenses and Costs 
 
+This NetApp ONTAP Cloud is the PAYGO model and doesn't require the user to license it, it will be licensed automatically after the instance is launched first time and user will be charged hourly. Click [here]( https://azuremarketplace.microsoft.com/en-us/marketplace/apps/netapp.netapp-ontap-cloud?tab=Overview) for pricing details.
+
 ## Prerequisites 
 
 Azure Subscription with specified payment method (NetApp ONTAP cloud is a market place product and requires payment method to be specified in Azure Subscription)
