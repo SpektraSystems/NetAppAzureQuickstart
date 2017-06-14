@@ -38,3 +38,6 @@ This template will deploy:
 -	One Windows Server 2012 R2 VM.
 -	One SQL Server 2014 SP2 Enterprise on Windows Server 2012 R2 VM.
 -	One NetApp ONTAP Cloud VM
+
+## Licenses and Costs 
+
