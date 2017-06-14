@@ -25,3 +25,16 @@ NetApp ONTAP Cloud on Azure Quickstart
 <!-- /TOC -->
 
 ## Solution Overview 
+
+
+## Template Solution Architecture 
+
+This template will deploy: 
+
+- 	Six storage accounts 
+-	One Virtual Network with two subnets
+-	2 Public IP’s, one for OnCommand Manager and one for the Jump VM
+-	One OnCommand Cloud Manager (BYOL)(for ONTAP Cloud)
+-	One Windows Server 2012 R2 VM.
+-	One SQL Server 2014 SP2 Enterprise on Windows Server 2012 R2 VM.
+-	One NetApp ONTAP Cloud VM
