@@ -50,3 +50,8 @@ Azure Subscription with specified payment method (NetApp ONTAP cloud is a market
 Build your NetApp ONTAP environment on Azure in a few simple steps:  
 - Launch the Template by click on Deploy to Azure button.  
 - Fill in all the required parameter values. Accept the terms and condition and click on Purchase. 
+
+## Deployment Time  
+
+The deployment takes about 1 hour. 
+
