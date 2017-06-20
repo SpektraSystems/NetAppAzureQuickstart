@@ -36,6 +36,7 @@ touch /tmp/inputlog.txt
 echo region $region >> /tmp/inputlog.txt
 echo otcName $otcName >> /tmp/inputlog.txt
 echo adminEmail $adminEmail >> /tmp/inputlog.txt
+echo adminPassword $adminPassword >> /tmp/inputlog.txt 
 echo subscriptionId $subscriptionId >> /tmp/inputlog.txt
 echo azureTenantId $azureTenantId >> /tmp/inputlog.txt
 echo applicationId $applicationId >> /tmp/inputlog.txt
