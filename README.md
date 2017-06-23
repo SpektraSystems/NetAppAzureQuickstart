@@ -9,7 +9,7 @@
 <br><br>
 NetApp ONTAP Cloud on Azure Quickstart
 
-<img src="https://github.com/Jithin-Varghese/Documentation-Images/blob/master/screenshot.png"/>
+<img src="https://raw.githubusercontent.com/Jithin-Varghese/Documentation-Images/master/netapp%20architecture.png"/>
 
 <!-- TOC -->
 
