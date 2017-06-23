@@ -26,6 +26,18 @@ NetApp ONTAP Cloud on Azure Quickstart
 
 ## Solution Overview 
 
+This Quick Start reference deployment guide provides step-by-step instructions for deploying an environment with NetApp ONTAP Cloud and Microsoft SQL Server on Azure.
+NetApp data storage systems are used by enterprises that require complete control, efficiency, durability, and resiliency of their data. NetApp ONTAP Cloud is a software-only version of Data ONTAP, which is the data management operating system from NetApp that is used on physical NetApp storage appliances.
+The features of ONTAP Cloud include:
+
+- Storage efficiencies that enable you to use less underlying storage capacity for your data needs
+- Instant backup and recovery for data of all sizes
+- Space-efficient, intuitive, bi-directional data transfer
+- Instant, writable data clones that consume no additional storage capacity
+- Ability to use multiple protocols (NFS, CIFS, and iSCSI) from the same storage system, at the same time  
+
+With ONTAP Cloud on Azure, you can spin up a new enterprise-class data management system in minutes on the cloud. This Quick Start automatically sets up a SQL Server 2014 – NetApp ONTAP Cloud with SQL Server on Azure.
+Environment that receives its storage and enterprise-class data management capabilities from a NetApp ONTAP Cloud system running on AWS. The Quick Start uses NetAPP OnCommand Cloud Manager to deploy and configure ONTAP Cloud.
 
 ## Template Solution Architecture 
 
