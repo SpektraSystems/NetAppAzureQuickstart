@@ -5,7 +5,7 @@
 region=${1}
 otcName=${2}
 adminEmail=${3}
-adminPassword=${4}
+adminPassword=${4} | base64 --decode 
 subscriptionId=${5}
 azureTenantId=${6}
 applicationId=${7}
