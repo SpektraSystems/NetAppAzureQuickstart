@@ -273,7 +273,7 @@ Unzip $BackupDirectory\AdventureWorks2014bakzip.zip $BackupDirectory
 # Restoring DB into SQL
 function Restore-Database
 {
-Invoke-Sqlcmd -Query "USE [master] RESTORE DATABASE AdventureWorks2014 FROM disk= 'F:\SQL\BACKUPS\AdventureWorks2014.bak' WITH MOVE 'AdventureWorks2014_data' TO 'F:\SQL\DATA\AdventureWorks2014.mdf', MOVE 'AdventureWorks2014_Log' TO 'G:\SQL\LOGS\AdventureWorks2014.ldf', REPLACE" 
+Invoke-Sqlcmd -Query "RESTORE DATABASE AdventureWorks2014 FROM disk= 'F:\SQL\BACKUPS\AdventureWorks2014.bak' WITH MOVE 'AdventureWorks2014_data' TO 'F:\SQL\DATA\AdventureWorks2014.mdf', MOVE 'AdventureWorks2014_Log' TO 'G:\SQL\LOGS\AdventureWorks2014.ldf', REPLACE" 
 }
 
 Create-DirectoryStructure

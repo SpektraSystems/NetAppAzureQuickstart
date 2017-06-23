@@ -70,20 +70,6 @@
                         }
                     },
                     {
-                        "name": "sshRule",
-                        "properties": {
-                            "description": "Allow SSH",
-                            "protocol": "Tcp",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "22",
-                            "sourceAddressPrefix": "[parameters('webSubnetPrefix')]",
-                            "destinationAddressPrefix": "[parameters('webSubnetPrefix')]",
-                            "access": "Allow",
-                            "priority": 120,
-                            "direction": "Inbound"
-                        }
-                    },
-                    {
                         "name": "rdpRule",
                         "properties": {
                             "description": "Allow RDP",
