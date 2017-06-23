@@ -18,8 +18,9 @@ NetApp ONTAP Cloud on Azure Quickstart
 3. [Licenses and Costs ](#licenses-and-costs)
 4. [Prerequisites](#prerequisites)
 5. [Deployment Steps](#deployment-steps)
-6. [Deployment Time](#deployment-time)
-7. [Support](#support)
+6. [Deployment Guide](#deployment-guide)
+7. [Deployment Time](#deployment-time)
+8. [Support](#support)
 
 
 <!-- /TOC -->
@@ -70,6 +71,10 @@ Build your NetApp ONTAP environment on Azure in a few simple steps:
 - Enable programmatic deployment for NetApp ONTAP Cloud for Azure – (PAYGo)
 - Launch the Template by click on Deploy to Azure button.  
 - Fill in all the required parameter values. Accept the terms and condition and click on Purchase. 
+
+## Deployment Guide
+
+For the detailed steps of deployment please refer the deployment guide from  [here]( https://github.com/SpektraSystems/NetAppAzureQuickstart/raw/master/Images/NetApp%20ONTAP%20Cloud%20on%20Azure.pdf).
 
 ## Deployment Time  
 
