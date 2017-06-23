@@ -5,7 +5,8 @@
 region=${1}
 otcName=${2}
 adminEmail=${3}
-adminPassword=${4} | base64 --decode 
+adminPasswordtemp =${4} 
+adminPassword = adminPasswordtemp | base64 --decode 
 subscriptionId=${5}
 azureTenantId=${6}
 applicationId=${7}
@@ -36,6 +37,7 @@ touch /tmp/inputlog.txt
 echo region $region >> /tmp/inputlog.txt
 echo otcName $otcName >> /tmp/inputlog.txt
 echo adminEmail $adminEmail >> /tmp/inputlog.txt
+echo adminPasswordtemp $adminPasswordtemp >> /tmp/inputlog.txt 
 echo adminPassword $adminPassword >> /tmp/inputlog.txt 
 echo subscriptionId $subscriptionId >> /tmp/inputlog.txt
 echo azureTenantId $azureTenantId >> /tmp/inputlog.txt
