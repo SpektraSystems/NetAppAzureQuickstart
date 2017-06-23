@@ -9,7 +9,7 @@
 <br><br>
 NetApp ONTAP Cloud on Azure Quickstart
 
-<img src="https://raw.githubusercontent.com/Jithin-Varghese/Documentation-Images/master/netapp%20architecture.png"/>
+
 
 <!-- TOC -->
 
@@ -38,6 +38,8 @@ This template will deploy:
 -	One Windows Server 2012 R2 VM.
 -	One SQL Server 2014 SP2 Enterprise on Windows Server 2012 R2 VM.
 -	One NetApp ONTAP Cloud VM
+
+<img src="https://raw.githubusercontent.com/Jithin-Varghese/Documentation-Images/master/netapp%20architecture.png"/>
 
 ## Licenses and Costs 
 
