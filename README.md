@@ -49,7 +49,11 @@ Azure Subscription with specified payment method (NetApp ONTAP cloud is a market
 
 ## Deployment Steps  
 
-Build your NetApp ONTAP environment on Azure in a few simple steps:  
+Build your NetApp ONTAP environment on Azure in a few simple steps:
+- Create an Active Directory Application.
+- Create an Application Key
+- Assigning the Cloud Manager role to AD application
+- Enable programmatic deployment for NetApp ONTAP Cloud for Azure – (PAYGo)
 - Launch the Template by click on Deploy to Azure button.  
 - Fill in all the required parameter values. Accept the terms and condition and click on Purchase. 
 
