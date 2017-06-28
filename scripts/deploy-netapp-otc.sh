@@ -5,8 +5,7 @@
 region=${1}
 otcName=${2}
 adminEmail=${3}
-adminPasswordtemp =${4} 
-adminPassword = adminPasswordtemp | base64 --decode 
+encodedPassword=${4} 
 subscriptionId=${5}
 azureTenantId=${6}
 applicationId=${7}
@@ -21,6 +20,9 @@ storageType=${15}
 QuickstartNameTagValue=${16}
 QuickstartProviderTagValue=${17}
 netappOntapVersion=${18}
+
+adminPassword=`echo $encodedPassword| base64 --decode` 
+
 ##Variable Values for Setting up OnCommand Manager 
 tenantName="azurenetappqs_tenant"
 roleID="Role-1"
@@ -37,7 +39,6 @@ touch /tmp/inputlog.txt
 echo region $region >> /tmp/inputlog.txt
 echo otcName $otcName >> /tmp/inputlog.txt
 echo adminEmail $adminEmail >> /tmp/inputlog.txt
-echo adminPasswordtemp $adminPasswordtemp >> /tmp/inputlog.txt 
 echo adminPassword $adminPassword >> /tmp/inputlog.txt 
 echo subscriptionId $subscriptionId >> /tmp/inputlog.txt
 echo azureTenantId $azureTenantId >> /tmp/inputlog.txt
