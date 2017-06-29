@@ -1,7 +1,7 @@
 # NetAppAzureQuickstart on Azure
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FSpektraSystems%2FNetAppAzureQuickstart%2Fmaster%2Fazuredeploy.json" target="_blank">
-<img src="https://raw.githubusercontent.com/Jithin-Varghese/Documentation-Images/master/netapp%20architecture.png"/>
+<img src="https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.png"/>
 </a>
 <a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2FSpektraSystems%2FNetAppAzureQuickstart%2Fmaster%2Fazuredeploy.json" target="_blank">
 <img src="https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.png"/>
@@ -51,7 +51,6 @@ This template will deploy:
 -	One Windows Server 2012 R2 VM.
 -	One SQL Server 2014 SP2 Enterprise on Windows Server 2012 R2 VM.
 -	One NetApp ONTAP Cloud VM
-
 <img src="https://raw.githubusercontent.com/Jithin-Varghese/Documentation-Images/master/netapp%20architecture.png"/>
 
 ## Licenses and Costs 
