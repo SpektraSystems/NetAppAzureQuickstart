@@ -122,7 +122,7 @@
             "instanceType": "Standard_DS5_v2",
             "storageType": "Premium_LRS"
         },
-        "netappOntapVersion": "ONTAP-9.1.T4.azure",
+        "netappOntapVersion": "ONTAP-9.2RC1.T1.azure",
         "NetAppTags": {
             "type": "object",
             "provider": "IDToBeDetermined"
