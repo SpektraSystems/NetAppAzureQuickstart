@@ -176,12 +176,9 @@ function Create-NcGroup( [String] $VserverIqn, [String] $InisitatorIqn, [String]
 function Set-MultiPathIO()
 {
     $IsEnabled = (Get-WindowsOptionalFeature -FeatureName MultiPathIO -Online).State
-
     if ($IsEnabled -ne "Enabled") {
-
         Enable-WindowsOptionalFeature –Online –FeatureName MultiPathIO
      }
-        
 }
 
 function Start-ThisService([String]$ServiceName)
@@ -274,7 +271,6 @@ Create-DirectoryStructure
 Set-SQLDataLocation
 Restart-Service -Force MSSQLSERVER
 Download-SampleDatabase
-
 }
 # Removing passwords from log files
 function Remove-Password
@@ -283,13 +279,8 @@ $azurelogfilepath = 'C:\WindowsAzure\Logs\Plugins\Microsoft.Compute.CustomScript
 $scriptlogfilepath = 'C:\WindowsAzure\Logs\SQLNetApp_Connect_Storage.ps1.txt'
 (get-content $azurelogfilepath) | % { $_ -replace $password, 'passwordremoved' } | set-content $azurelogfilepath
 (get-content $scriptlogfilepath) | % { $_ -replace $password, 'passwordremoved' } | set-content $scriptlogfilepath
-
 }
-
-
-
 ## Starting functions execution
-
 $SVMPwd = $password
 Get-ONTAPClusterDetails $email $password $ocmip
 Connect-ONTAP $AdminLIF $iScSILIF $SVMName $SVMPwd $Capacity
