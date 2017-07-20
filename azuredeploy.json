@@ -18,7 +18,7 @@
             "type": "securestring",
             "minLength": 12,
             "metadata": {
-                "description": "Password used for VM Login, OnCommand Manager Portal Login and ONTAP SVM Password."
+                "description": "Password used for VM Login, OnCommand Manager Portal Login and ONTAP SVM Password.Enter a password that is between 12 and 50 characters in length. The password must contain at least one English letter and one number. The password must not contain non-English letters or admin."
             }
         },
         "netappOntapCloudLicenseType": {
@@ -29,7 +29,7 @@
                 "Premium"
             ],
             "metadata": {
-                "description": "Password for the user of Virtual Machine. Used for onCommandManager."
+                "description": "NetApp ONTAP cloud license."
             }
         },
         "azureADApplicationID": {
