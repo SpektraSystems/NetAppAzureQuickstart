@@ -50,7 +50,9 @@
             "settings": {
                 "fileUris": [
                     "[concat(parameters('_artifactsLocation'),'/scripts/',variables('scriptFileName'),parameters('_artifactsLocationSasToken'))]"
-                ],
+                ]
+                },
+                "protectedSettings": {
                 "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File',' ', variables('scriptFileName'), ' ', parameters('adminEmailAddress'),' ', parameters('adminPassword'),' ', parameters('otcIp'),' ', parameters('sqlDataVolumeSize'))]"      
         }
       }
