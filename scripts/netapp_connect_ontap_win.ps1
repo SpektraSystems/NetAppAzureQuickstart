@@ -276,7 +276,7 @@ Restart-Service -Force MSSQLSERVER
 Download-SampleDatabase
 
 }
-function Remove-Password
+function Remove-Password([String]$password)
 {
 $azurelogfilepath = 'C:\WindowsAzure\Logs\Plugins\Microsoft.Compute.CustomScriptExtension\1.8\CustomScriptHandler.log'
 $scriptlogfilepath = 'C:\WindowsAzure\Logs\SQLNetApp_Connect_Storage.ps1.txt'
@@ -291,4 +291,4 @@ $SVMPwd = $password
 Get-ONTAPClusterDetails $email $password $ocmip
 Connect-ONTAP $AdminLIF $iScSILIF $SVMName $SVMPwd $Capacity
 Load-SampleDatabase
-Remove-Password
+Remove-Password $password
