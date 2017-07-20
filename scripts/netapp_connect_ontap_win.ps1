@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param(
     [Parameter(Mandatory=$true)]
     [String]$email,
@@ -176,9 +176,12 @@ function Create-NcGroup( [String] $VserverIqn, [String] $InisitatorIqn, [String]
 function Set-MultiPathIO()
 {
     $IsEnabled = (Get-WindowsOptionalFeature -FeatureName MultiPathIO -Online).State
+
     if ($IsEnabled -ne "Enabled") {
+
         Enable-WindowsOptionalFeature –Online –FeatureName MultiPathIO
      }
+        
 }
 
 function Start-ThisService([String]$ServiceName)
@@ -267,22 +270,24 @@ Unzip $BackupDirectory\AdventureWorks2014bakzip.zip $BackupDirectory
 
 }
 
+# Restoring DB into SQL
+function Restore-Database
+{
+Invoke-Sqlcmd -Query "RESTORE DATABASE AdventureWorks2014 FROM disk= 'F:\SQL\BACKUPS\AdventureWorks2014.bak' WITH MOVE 'AdventureWorks2014_data' TO 'F:\SQL\DATA\AdventureWorks2014.mdf', MOVE 'AdventureWorks2014_Log' TO 'G:\SQL\LOGS\AdventureWorks2014.ldf', REPLACE" 
+}
+
 Create-DirectoryStructure
 Set-SQLDataLocation
 Restart-Service -Force MSSQLSERVER
 Download-SampleDatabase
+Restore-Database
+
 }
-# Removing passwords from log files
-function Remove-Password
-{
-$azurelogfilepath = 'C:\WindowsAzure\Logs\Plugins\Microsoft.Compute.CustomScriptExtension\1.8\CustomScriptHandler.log'
-$scriptlogfilepath = 'C:\WindowsAzure\Logs\SQLNetApp_Connect_Storage.ps1.txt'
-(get-content $azurelogfilepath) | % { $_ -replace $password, 'passwordremoved' } | set-content $azurelogfilepath
-(get-content $scriptlogfilepath) | % { $_ -replace $password, 'passwordremoved' } | set-content $scriptlogfilepath
-}
+
+
 ## Starting functions execution
+
 $SVMPwd = $password
 Get-ONTAPClusterDetails $email $password $ocmip
 Connect-ONTAP $AdminLIF $iScSILIF $SVMName $SVMPwd $Capacity
 Load-SampleDatabase
-Remove-Password
