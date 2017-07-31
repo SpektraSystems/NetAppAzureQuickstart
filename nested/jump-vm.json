@@ -43,19 +43,12 @@
         },
         "quickstartTags": {
             "type": "object"
-        },
-        "_artifactsLocation": {
-            "type": "string"
-        },
-        "_artifactsLocationSasToken": {
-            "type": "string"
         }
     },
     "variables": {
         "publicIPAddressType": "Static",
         "vmStorageAccountContainerName": "vhds",
-        "OSDiskName": "jump-vm-osdisk",
-        "psScript": "jumpvmScript.ps1"
+        "OSDiskName": "jump-vm-osdisk"
     },
     "resources": [{
             "type": "Microsoft.Storage/storageAccounts",
@@ -181,10 +174,7 @@
                     "typeHandlerVersion": "1.8",
                     "autoUpgradeMinorVersion": true,
                     "settings": {
-                        "fileUris": [
-                            "[concat(parameters('_artifactsLocation'),'/scripts/',variables('psScript'),parameters('_artifactsLocationSasToken'))]"
-                        ],
-                        "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File',' ',variables('psScript'))]"
+                        "commandToExecute": "[concat('powershell -command',' ','\"Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose\"'\r\n)]"
                     }
                 }
             }]
