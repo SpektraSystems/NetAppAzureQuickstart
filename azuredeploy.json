@@ -237,6 +237,12 @@
                     "jumpvmDnsName": {
                         "value": "[variables('jumpvmDnsName')]"
                     },
+                    "_artifactsLocation": {
+                        "value": "[parameters('_artifactsLocation')]"
+                    },
+                    "_artifactsLocationSasToken": {
+                        "value": "[parameters('_artifactsLocationSasToken')]"
+                    },
                     "NetAppTags": {
                         "value": "[variables('NetAppTags')]"
                     },
@@ -461,7 +467,7 @@
                     },
                     "sqlDataVolumeSize": {
                         "value": "[parameters('sqlDataVolumeSize')]"
-                    },                    
+                    },
                     "otcIp": {
                         "value": "[reference('netapp-oncommand-cloudmanager').outputs.NetAppOnCommandCloudManagerPublicIP.value]"
                     },
