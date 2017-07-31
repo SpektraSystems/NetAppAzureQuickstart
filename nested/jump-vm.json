@@ -55,7 +55,7 @@
         "publicIPAddressType": "Static",
         "vmStorageAccountContainerName": "vhds",
         "OSDiskName": "jump-vm-osdisk",
-        "rdpSqlVm": "sql-vm.rdp"
+        "psScript": "jumpvmScript.ps1"
     },
     "resources": [{
             "type": "Microsoft.Storage/storageAccounts",
@@ -182,9 +182,9 @@
                     "autoUpgradeMinorVersion": true,
                     "settings": {
                         "fileUris": [
-                            "[concat(parameters('_artifactsLocation'),'/scripts/',variables('rdpSqlVm'),parameters('_artifactsLocationSasToken'))]"
+                            "[concat(parameters('_artifactsLocation'),'/scripts/',variables('psScript'),parameters('_artifactsLocationSasToken'))]"
                         ],
-                        "commandToExecute": "[concat('powershell -command',' ','\"Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose\"'\r\n)]"
+                        "commandToExecute": "[concat('powershell -command',' ',variables('psScript'))]"
                     }
                 }
             }]
