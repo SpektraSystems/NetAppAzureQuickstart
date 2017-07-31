@@ -5,7 +5,7 @@
         "adminUserName": {
             "type": "string"
         },
-        "adminPassword": {
+        "windowsPassword": {
             "type": "securestring"
         },
         "diagStorageAccountName": {
@@ -131,7 +131,7 @@
                 "osProfile": {
                     "computerName": "[parameters('jumpvmName')]",
                     "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]"
+                    "windowsPassword": "[parameters('windowsPassword')]"
                 },
                 "storageProfile": {
                     "imageReference": {
