@@ -14,14 +14,7 @@
                 "description": "Admin Email Address, used for NetApp OnCommand Manager GUI Login"
             }
         },
-        "windowsPassword": {
-            "type": "securestring",
-            "minLength": 12,
-            "metadata": {
-                "description": "Password used for VM Login, OnCommand Manager Portal Login and ONTAP SVM Password.Enter a password that is between 12 and 50 characters in length. The password must contain at least one English letter and one number. The password must not contain non-English letters or admin."
-            }
-        },
-        "linuxPassword": {
+        "adminPassword": {
             "type": "securestring",
             "minLength": 12,
             "metadata": {
@@ -211,8 +204,8 @@
                     "adminUsername": {
                         "value": "[parameters('adminUsername')]"
                     },
-                    "windowsPassword": {
-                        "value": "[parameters('windowsPassword')]"
+                    "adminPassword": {
+                        "value": "[parameters('adminPassword')]"
                     },
                     "diagStorageAccountName": {
                         "value": "[variables('diagStorageAccountName')]"
@@ -271,8 +264,8 @@
                     "adminUsername": {
                         "value": "[parameters('adminUsername')]"
                     },
-                    "windowsPassword": {
-                        "value": "[parameters('windowsPassword')]"
+                    "adminPassword": {
+                        "value": "[parameters('adminPassword')]"
                     },
                     "diagStorageAccountName": {
                         "value": "[variables('diagStorageAccountName')]"
@@ -331,8 +324,8 @@
                     "adminUsername": {
                         "value": "[parameters('adminUsername')]"
                     },
-                    "linuxPassword": {
-                        "value": "[parameters('linuxPassword')]"
+                    "adminPassword": {
+                        "value": "[parameters('adminPassword')]"
                     },
                     "webStorageAccountName": {
                         "value": "[variables('webStorageAccountName')]"
@@ -391,8 +384,8 @@
                     "adminEmailAddress": {
                         "value": "[parameters('adminEmailAddress')]"
                     },
-                    "linuxPassword": {
-                        "value": "[parameters('linuxPassword')]"
+                    "adminPassword": {
+                        "value": "[parameters('adminPassword')]"
                     },
                     "dataNsgName": {
                         "value": "[variables('dataNsgName')]"
@@ -454,8 +447,8 @@
                     "adminEmailAddress": {
                         "value": "[parameters('adminEmailAddress')]"
                     },
-                    "linuxPassword": {
-                        "value": "[parameters('linuxPassword')]"
+                    "adminPassword": {
+                        "value": "[parameters('adminPassword')]"
                     },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
@@ -468,7 +461,7 @@
                     },
                     "sqlDataVolumeSize": {
                         "value": "[parameters('sqlDataVolumeSize')]"
-                    },
+                    },                    
                     "otcIp": {
                         "value": "[reference('netapp-oncommand-cloudmanager').outputs.NetAppOnCommandCloudManagerPublicIP.value]"
                     },
