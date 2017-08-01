@@ -21,7 +21,7 @@
                 "description": "Password used for windows VM Login.Enter a password that is between 12 and 50 characters in length. The password must contain at least one of English uppercase letter, English lowercase letter, base 10 digit(0-9), non alphanumeric character such as exclamation point (!), dollar sign ($), number sign (#), or percent (%). The password must not contain non-English letters or admin."
             }
         },
-        "otpPassword": {
+        "ontpPassword": {
             "type": "securestring",
             "minLength": 12,
             "metadata": {
@@ -337,8 +337,8 @@
                     "adminUsername": {
                         "value": "[parameters('adminUsername')]"
                     },
-                    "otpPassword": {
-                        "value": "[parameters('otpPassword')]"
+                    "ontpPassword": {
+                        "value": "[parameters('ontpPassword')]"
                     },
                     "webStorageAccountName": {
                         "value": "[variables('webStorageAccountName')]"
@@ -397,8 +397,8 @@
                     "adminEmailAddress": {
                         "value": "[parameters('adminEmailAddress')]"
                     },
-                    "otpPassword": {
-                        "value": "[parameters('otpPassword')]"
+                    "ontpPassword": {
+                        "value": "[parameters('ontpPassword')]"
                     },
                     "dataNsgName": {
                         "value": "[variables('dataNsgName')]"
@@ -460,8 +460,8 @@
                     "adminEmailAddress": {
                         "value": "[parameters('adminEmailAddress')]"
                     },
-                    "otpPassword": {
-                        "value": "[parameters('otpPassword')]"
+                    "ontpPassword": {
+                        "value": "[parameters('ontpPassword')]"
                     },
                     "vmPassword": {
                         "value": "[parameters('vmPassword')]"

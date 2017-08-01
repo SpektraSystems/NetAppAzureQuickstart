@@ -8,7 +8,7 @@
         "vmPassword": {
             "value": "GEN-PASSWORD"
         },
-        "otpPassword": {
+        "ontpPassword": {
             "value": "GEN-PASSWORD"
         },
         "remoteAllowedCIDR": {
