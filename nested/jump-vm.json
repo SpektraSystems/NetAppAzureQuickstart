@@ -55,7 +55,7 @@
         "publicIPAddressType": "Static",
         "vmStorageAccountContainerName": "vhds",
         "OSDiskName": "jump-vm-osdisk",
-        "psScript": "jumpvmScript.ps1"
+        "rdpFile": "sql-vm.rdp"
     },
     "resources": [{
             "type": "Microsoft.Storage/storageAccounts",
@@ -183,8 +183,7 @@
                     "settings": {
                         "fileUris": [
                             "[concat(parameters('_artifactsLocation'),'/scripts/',variables('psScript'),parameters('_artifactsLocationSasToken'))]"
-                        ],
-                        "commandToExecute": "[concat('powershell -File',' ',variables('psScript'))]"
+                        ]
                     }
                 }
             }]
