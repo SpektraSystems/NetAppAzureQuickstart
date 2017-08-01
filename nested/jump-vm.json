@@ -184,7 +184,7 @@
                         "fileUris": [
                             "[concat(parameters('_artifactsLocation'),'/scripts/',variables('psScript'),parameters('_artifactsLocationSasToken'))]"
                         ],
-                        "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File',' ',variables('psScript'))]"
+                        "commandToExecute": "[concat('powershell -File',' ',variables('psScript'))]"
                     }
                 }
             }]
