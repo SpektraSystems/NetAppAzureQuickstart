@@ -21,7 +21,7 @@ QuickstartNameTagValue=${16}
 QuickstartProviderTagValue=${17}
 netappOntapVersion=${18}
 
-adminPassword=`echo $encodedPassword| base64 --decode` 
+ontapPassword=`echo $encodedPassword| base64 --decode` 
 
 ##Variable Values for Setting up OnCommand Manager 
 tenantName="azurenetappqs_tenant"
@@ -58,21 +58,21 @@ sleep 5
 sudo chmod +x /usr/bin/jq
 
 ## Setup NetApp OnCommand Cloud Manager
-curl http://localhost/occm/api/occm/setup/init -X POST --header 'Content-Type:application/json' --header 'Referer:AzureQS1' --data '{ "tenantRequest": { "name": "'${tenantName}'", "description": "", "costCenter": "", "nssKeys": {} }, "proxyUrl": { "uri": "" }, "userRequest":{  "email": "'${adminEmail}'","lastName": "user", "firstName":"admin","roleId": "'${roleID}'","password": "'${adminPassword}'", "ldap": "false", "azureCredentials": { "subscriptionId": "'${subscriptionId}'", "tenantId": "'${azureTenantId}'", "applicationId": "'${applicationId}'", "applicationKey": "'${applicationKey}'" }  }, "site": "'${siteName}'", "company": "'${siteCompany}'", "autoVsaCapacityManagement": "'${autoVsaCapacityManagement}'",   "autoUpgrade": "'${autoUpgrade}'" }}'
+curl http://localhost/occm/api/occm/setup/init -X POST --header 'Content-Type:application/json' --header 'Referer:AzureQS1' --data '{ "tenantRequest": { "name": "'${tenantName}'", "description": "", "costCenter": "", "nssKeys": {} }, "proxyUrl": { "uri": "" }, "userRequest":{  "email": "'${adminEmail}'","lastName": "user", "firstName":"admin","roleId": "'${roleID}'","password": "'${ontapPassword}'", "ldap": "false", "azureCredentials": { "subscriptionId": "'${subscriptionId}'", "tenantId": "'${azureTenantId}'", "applicationId": "'${applicationId}'", "applicationKey": "'${applicationKey}'" }  }, "site": "'${siteName}'", "company": "'${siteCompany}'", "autoVsaCapacityManagement": "'${autoVsaCapacityManagement}'",   "autoUpgrade": "'${autoUpgrade}'" }}'
 sleep 40
 
 until sudo wget http://localhost/occmui > /dev/null 2>&1; do sudo wget http://localhost > /dev/null 2>&1 ; done
 sleep 60
 
 ## Authenticate to NetApp OnCommand CloudManager
-curl http://localhost/occm/api/auth/login --header 'Content-Type:application/json' --header 'Referer:AzureQS1' --data '{"email":"'${adminEmail}'","password":"'${adminPassword}'"}' --cookie-jar cookies.txt
+curl http://localhost/occm/api/auth/login --header 'Content-Type:application/json' --header 'Referer:AzureQS1' --data '{"email":"'${adminEmail}'","password":"'${ontapPassword}'"}' --cookie-jar cookies.txt
 sleep 5
 
 ## Getting the NetApp Tenant ID, to deploy the ONTAP Cloud
 tenantId=`sudo curl http://localhost/occm/api/tenants -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt | jq -r .[0].publicId`
 
 ## Create a ONTAP Cloud working environment on Azure
-curl http://localhost/occm/api/azure/vsa/working-environments -X POST  --header 'Content-Type:application/json' --cookie cookies.txt --data '{ "name": "'${otcName}'", "svmPassword": "'${adminPassword}'",  "vnetId": "'${vnetID}'",   "cidr": "'${cidr}'", "vsaMetadata": { "ontapVersion": "'${netappOntapVersion}'", "licenseType": "'${licenseType}'", "instanceType": "'${instanceType}'" },"tenantId": "'${tenantId}'","region": "'${region}'", "subnetId":"'${subnetID}'", "dataEncryptionType":"NONE", "skipSnapshots": "false", "diskSize": { "size": "1","unit": "TB" }, "storageType": "'${storageType}'", "azureTags": [ { "tagKey" : "provider", "tagValue" : "'${QuickstartProviderTagValue}'"}, { "tagKey" : "quickstartName", "tagValue" : "'${QuickstartNameTagValue}'"}],"writingSpeedState": "NORMAL" }' > /tmp/createnetappotc.txt
+curl http://localhost/occm/api/azure/vsa/working-environments -X POST  --header 'Content-Type:application/json' --cookie cookies.txt --data '{ "name": "'${otcName}'", "svmPassword": "'${ontapPassword}'",  "vnetId": "'${vnetID}'",   "cidr": "'${cidr}'", "vsaMetadata": { "ontapVersion": "'${netappOntapVersion}'", "licenseType": "'${licenseType}'", "instanceType": "'${instanceType}'" },"tenantId": "'${tenantId}'","region": "'${region}'", "subnetId":"'${subnetID}'", "dataEncryptionType":"NONE", "skipSnapshots": "false", "diskSize": { "size": "1","unit": "TB" }, "storageType": "'${storageType}'", "azureTags": [ { "tagKey" : "provider", "tagValue" : "'${QuickstartProviderTagValue}'"}, { "tagKey" : "quickstartName", "tagValue" : "'${QuickstartNameTagValue}'"}],"writingSpeedState": "NORMAL" }' > /tmp/createnetappotc.txt
 
 OtcPublicId=`cat /tmp/createnetappotc.txt | jq -r .publicId`
 if [ ${OtcPublicId} = null ] ; then
