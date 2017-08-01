@@ -5,7 +5,7 @@
         "adminUserName": {
             "type": "string"
         },
-        "adminPassword": {
+        "vmPassword": {
             "type": "securestring"
         },
         "diagStorageAccountName": {
@@ -138,7 +138,7 @@
                 "osProfile": {
                     "computerName": "[parameters('jumpvmName')]",
                     "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]"
+                    "vmPassword": "[parameters('vmPassword')]"
                 },
                 "storageProfile": {
                     "imageReference": {

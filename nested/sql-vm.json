@@ -11,7 +11,7 @@
         "adminUsername": {
             "type": "string"
         },
-        "windowsPassword": {
+        "vmPassword": {
             "type": "securestring"
         },
         "diagStorageAccountName": {
@@ -109,7 +109,7 @@
                 "osProfile": {
                     "computerName": "[parameters('sqlVmName')]",
                     "adminUsername": "[parameters('adminUsername')]",
-                    "windowsPassword": "[parameters('windowsPassword')]"
+                    "vmPassword": "[parameters('vmPassword')]"
                 },
                 "storageProfile": {
                     "imageReference": {
