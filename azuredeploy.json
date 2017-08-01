@@ -14,14 +14,14 @@
                 "description": "Admin Email Address, used for NetApp OnCommand Manager GUI Login"
             }
         },
-        "windowsPassword": {
+        "vmPassword": {
             "type": "securestring",
             "minLength": 12,
             "metadata": {
                 "description": "Password used for windows VM Login.Enter a password that is between 12 and 50 characters in length. The password must contain at least one of English uppercase letter, English lowercase letter, base 10 digit(0-9), non alphanumeric character such as exclamation point (!), dollar sign ($), number sign (#), or percent (%). The password must not contain non-English letters or admin."
             }
         },
-        "ontapPassword": {
+        "otpPassword": {
             "type": "securestring",
             "minLength": 12,
             "metadata": {
@@ -211,8 +211,8 @@
                     "adminUsername": {
                         "value": "[parameters('adminUsername')]"
                     },
-                    "windowsPassword": {
-                        "value": "[parameters('windowsPassword')]"
+                    "vmPassword": {
+                        "value": "[parameters('vmPassword')]"
                     },
                     "diagStorageAccountName": {
                         "value": "[variables('diagStorageAccountName')]"
@@ -277,8 +277,8 @@
                     "adminUsername": {
                         "value": "[parameters('adminUsername')]"
                     },
-                    "windowsPassword": {
-                        "value": "[parameters('windowsPassword')]"
+                    "vmPassword": {
+                        "value": "[parameters('vmPassword')]"
                     },
                     "diagStorageAccountName": {
                         "value": "[variables('diagStorageAccountName')]"
@@ -337,8 +337,8 @@
                     "adminUsername": {
                         "value": "[parameters('adminUsername')]"
                     },
-                    "ontapPassword": {
-                        "value": "[parameters('ontapPassword')]"
+                    "otpPassword": {
+                        "value": "[parameters('otpPassword')]"
                     },
                     "webStorageAccountName": {
                         "value": "[variables('webStorageAccountName')]"
@@ -397,8 +397,8 @@
                     "adminEmailAddress": {
                         "value": "[parameters('adminEmailAddress')]"
                     },
-                    "ontapPassword": {
-                        "value": "[parameters('ontapPassword')]"
+                    "otpPassword": {
+                        "value": "[parameters('otpPassword')]"
                     },
                     "dataNsgName": {
                         "value": "[variables('dataNsgName')]"
@@ -460,11 +460,11 @@
                     "adminEmailAddress": {
                         "value": "[parameters('adminEmailAddress')]"
                     },
-                    "ontapPassword": {
-                        "value": "[parameters('ontapPassword')]"
+                    "otpPassword": {
+                        "value": "[parameters('otpPassword')]"
                     },
-                    "windowsPassword": {
-                        "value": "[parameters('windowsPassword')]"
+                    "vmPassword": {
+                        "value": "[parameters('vmPassword')]"
                     },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"

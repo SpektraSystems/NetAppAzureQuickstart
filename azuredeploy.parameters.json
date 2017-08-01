@@ -5,10 +5,10 @@
         "adminUsername": {
             "value": "GEN-UNIQUE"
         },
-        "windowsPassword": {
+        "vmPassword": {
             "value": "GEN-PASSWORD"
         },
-        "ontapPassword": {
+        "otpPassword": {
             "value": "GEN-PASSWORD"
         },
         "remoteAllowedCIDR": {
