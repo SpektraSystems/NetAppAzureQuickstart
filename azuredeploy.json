@@ -14,7 +14,14 @@
                 "description": "Admin Email Address, used for NetApp OnCommand Manager GUI Login"
             }
         },
-        "adminPassword": {
+        "windowsPassword": {
+            "type": "securestring",
+            "minLength": 12,
+            "metadata": {
+                "description": "Password used for windows VM Login.Enter a password that is between 12 and 50 characters in length. The password must contain at least one of English uppercase letter, English lowercase letter, base 10 digit(0-9), non alphanumeric character such as exclamation point (!), dollar sign ($), number sign (#), or percent (%). The password must not contain non-English letters or admin."
+            }
+        },
+        "ontapPassword": {
             "type": "securestring",
             "minLength": 12,
             "metadata": {
@@ -122,7 +129,7 @@
             "instanceType": "Standard_DS5_v2",
             "storageType": "Premium_LRS"
         },
-        "netappOntapVersion": "ONTAP-9.2RC1.T1.azure",
+        "netappOntapVersion": "ONTAP-9.2RC1.T3.azure",
         "NetAppTags": {
             "type": "object",
             "provider": "IDToBeDetermined"
@@ -204,8 +211,8 @@
                     "adminUsername": {
                         "value": "[parameters('adminUsername')]"
                     },
-                    "adminPassword": {
-                        "value": "[parameters('adminPassword')]"
+                    "windowsPassword": {
+                        "value": "[parameters('windowsPassword')]"
                     },
                     "diagStorageAccountName": {
                         "value": "[variables('diagStorageAccountName')]"
@@ -237,6 +244,12 @@
                     "jumpvmDnsName": {
                         "value": "[variables('jumpvmDnsName')]"
                     },
+                    "_artifactsLocation": {
+                        "value": "[parameters('_artifactsLocation')]"
+                    },
+                    "_artifactsLocationSasToken": {
+                        "value": "[parameters('_artifactsLocationSasToken')]"
+                    },
                     "NetAppTags": {
                         "value": "[variables('NetAppTags')]"
                     },
@@ -264,8 +277,8 @@
                     "adminUsername": {
                         "value": "[parameters('adminUsername')]"
                     },
-                    "adminPassword": {
-                        "value": "[parameters('adminPassword')]"
+                    "windowsPassword": {
+                        "value": "[parameters('windowsPassword')]"
                     },
                     "diagStorageAccountName": {
                         "value": "[variables('diagStorageAccountName')]"
@@ -324,8 +337,8 @@
                     "adminUsername": {
                         "value": "[parameters('adminUsername')]"
                     },
-                    "adminPassword": {
-                        "value": "[parameters('adminPassword')]"
+                    "ontapPassword": {
+                        "value": "[parameters('ontapPassword')]"
                     },
                     "webStorageAccountName": {
                         "value": "[variables('webStorageAccountName')]"
@@ -384,8 +397,8 @@
                     "adminEmailAddress": {
                         "value": "[parameters('adminEmailAddress')]"
                     },
-                    "adminPassword": {
-                        "value": "[parameters('adminPassword')]"
+                    "ontapPassword": {
+                        "value": "[parameters('ontapPassword')]"
                     },
                     "dataNsgName": {
                         "value": "[variables('dataNsgName')]"
@@ -447,8 +460,11 @@
                     "adminEmailAddress": {
                         "value": "[parameters('adminEmailAddress')]"
                     },
-                    "adminPassword": {
-                        "value": "[parameters('adminPassword')]"
+                    "ontapPassword": {
+                        "value": "[parameters('ontapPassword')]"
+                    },
+                    "windowsPassword": {
+                        "value": "[parameters('windowsPassword')]"
                     },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
@@ -461,7 +477,7 @@
                     },
                     "sqlDataVolumeSize": {
                         "value": "[parameters('sqlDataVolumeSize')]"
-                    },                    
+                    },
                     "otcIp": {
                         "value": "[reference('netapp-oncommand-cloudmanager').outputs.NetAppOnCommandCloudManagerPublicIP.value]"
                     },
