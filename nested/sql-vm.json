@@ -109,7 +109,7 @@
                 "osProfile": {
                     "computerName": "[parameters('sqlVmName')]",
                     "adminUsername": "[parameters('adminUsername')]",
-                    "vmPassword": "[parameters('vmPassword')]"
+                    "adminPassword": "[parameters('vmPassword')]"
                 },
                 "storageProfile": {
                     "imageReference": {

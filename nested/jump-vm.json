@@ -138,7 +138,7 @@
                 "osProfile": {
                     "computerName": "[parameters('jumpvmName')]",
                     "adminUsername": "[parameters('adminUsername')]",
-                    "vmPassword": "[parameters('vmPassword')]"
+                    "adminPassword": "[parameters('vmPassword')]"
                 },
                 "storageProfile": {
                     "imageReference": {

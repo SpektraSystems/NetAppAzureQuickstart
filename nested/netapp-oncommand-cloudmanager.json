@@ -137,7 +137,7 @@
                 "osProfile": {
                     "computerName": "[parameters('OnCommandCloudManagerVmName')]",
                     "adminUsername": "[parameters('adminUsername')]",
-                    "ontpPassword": "[parameters('ontpPassword')]"
+                    "adminPassword": "[parameters('ontpPassword')]"
                 },
                 "storageProfile": {
                     "imageReference": {
