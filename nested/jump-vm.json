@@ -183,10 +183,9 @@
                     "autoUpgradeMinorVersion": true,
                     "settings": {
                         "fileUris": [
-                            "[concat(parameters('_artifactsLocation'),'/scripts/',variables('psScript'),parameters('_artifactsLocationSasToken'))]",
                             "[concat(parameters('_artifactsLocation'),'/scripts/',variables('psToolkitFileName'),parameters('_artifactsLocationSasToken'))]"
                         ],
-                        "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File',' ',variables('psScript'))]"
+                        "commandToExecute": "[concat('powershell -command',' ','\"Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose\"'\r\n)]"
                     }
                 }
             }]
