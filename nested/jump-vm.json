@@ -186,7 +186,7 @@
                             "[concat(parameters('_artifactsLocation'),'/scripts/',variables('psScript'),parameters('_artifactsLocationSasToken'))]",
                             "[concat(parameters('_artifactsLocation'),'/scripts/',variables('psToolkitFileName'),parameters('_artifactsLocationSasToken'))]"
                         ],
-                        "commandToExecute": "[concat('powershell -File',' ',variables('psScript'),' ',parameters('adminUserName'))]"
+                        "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File',' ',variables('psScript'))]"
                     }
                 }
             }]
