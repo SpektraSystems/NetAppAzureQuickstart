@@ -182,9 +182,6 @@
                     "typeHandlerVersion": "1.8",
                     "autoUpgradeMinorVersion": true,
                     "settings": {
-                        "fileUris": [
-                            "[concat(parameters('_artifactsLocation'),'/scripts/',variables('psToolkitFileName'),parameters('_artifactsLocationSasToken'))]"
-                        ],
                         "commandToExecute": "[concat('powershell -command',' ','\"Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose\"'\r\n)]"
                     }
                 }
