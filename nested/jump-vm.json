@@ -55,7 +55,8 @@
         "publicIPAddressType": "Static",
         "vmStorageAccountContainerName": "vhds",
         "OSDiskName": "jump-vm-osdisk",
-        "psScript": "jumpvmScript.ps1"
+        "psScript": "jumpvmScript.ps1",
+        "psToolkitFileName": "NetApp_PowerShell_Toolkit_4.3.0.msi"
     },
     "resources": [{
             "type": "Microsoft.Storage/storageAccounts",
@@ -182,7 +183,8 @@
                     "autoUpgradeMinorVersion": true,
                     "settings": {
                         "fileUris": [
-                            "[concat(parameters('_artifactsLocation'),'/scripts/',variables('psScript'),parameters('_artifactsLocationSasToken'))]"
+                            "[concat(parameters('_artifactsLocation'),'/scripts/',variables('psScript'),parameters('_artifactsLocationSasToken'))]",
+                            "[concat(parameters('_artifactsLocation'),'/scripts/',variables('psToolkitFileName'),parameters('_artifactsLocationSasToken'))]"
                         ],
                         "commandToExecute": "[concat('powershell -File',' ',variables('psScript'),' ',parameters('adminUserName'))]"
                     }
