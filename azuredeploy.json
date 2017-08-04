@@ -20,13 +20,7 @@
             "metadata": {
                 "description": "Password used for windows VM Login.Enter a password that is between 12 and 50 characters in length. The password must contain at least one of English uppercase letter, English lowercase letter, base 10 digit(0-9), non alphanumeric character such as exclamation point (!), dollar sign ($), number sign (#), or percent (%). The password must not contain non-English letters or admin."
             }
-        },
-        "ontpPassword": {
-            "type": "securestring",
-            "minLength": 12,
-            "metadata": {
-                "description": "Password used for VM Login, OnCommand Manager Portal Login and ONTAP SVM Password.Enter a password that is between 12 and 50 characters in length. The password must contain at least one English letter and one number. The password must not contain non-English letters or admin."
-            }
+
         },
         "netappOntapCloudLicenseType": {
             "type": "string",
@@ -86,6 +80,7 @@
     "variables": {
         "webNsgName": "web-nsg",
         "dataNsgName": "data-nsg",
+        "ontpPassword": "[concat('ontap', uniqueString(resourceGroup().id))]",
         "webStorageAccountName": "[concat('webst',uniqueString(resourceGroup().id))]",
         "dataStorageAccountName": "[concat('datast',uniqueString(resourceGroup().id))]",
         "jumpStorageAccountName": "[concat('jumpst',uniqueString(resourceGroup().id))]",
@@ -338,7 +333,7 @@
                         "value": "[parameters('adminUsername')]"
                     },
                     "ontpPassword": {
-                        "value": "[parameters('ontpPassword')]"
+                        "value": "[variables('ontpPassword')]"
                     },
                     "webStorageAccountName": {
                         "value": "[variables('webStorageAccountName')]"
@@ -398,7 +393,7 @@
                         "value": "[parameters('adminEmailAddress')]"
                     },
                     "ontpPassword": {
-                        "value": "[parameters('ontpPassword')]"
+                        "value": "[variables('ontpPassword')]"
                     },
                     "dataNsgName": {
                         "value": "[variables('dataNsgName')]"
@@ -461,7 +456,7 @@
                         "value": "[parameters('adminEmailAddress')]"
                     },
                     "ontpPassword": {
-                        "value": "[parameters('ontpPassword')]"
+                        "value": "[variables('ontpPassword')]"
                     },
                     "vmPassword": {
                         "value": "[parameters('vmPassword')]"
@@ -495,6 +490,11 @@
         "NetApp ONTAP Cloud Manager URL:": {
             "type": "string",
             "value": "[reference('netapp-oncommand-cloudmanager').outputs.NetAppOnCommandCloudManagerURL.value]"
+        },
+        "ontpPassword": {
+            "type": "string",
+            "value": "[variables('ontpPassword')]"
+
         },
         "Jump VM FQDN": {
             "type": "string",
