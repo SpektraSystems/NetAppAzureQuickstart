@@ -8,6 +8,9 @@
         "adminPassword": {
             "type": "securestring"
         },
+        "OTCPassword": {
+            "type": "securestring"
+        },
         "_artifactsLocation": {
             "type": "string"
         },
@@ -53,7 +56,7 @@
                 ]
                 },
                 "protectedSettings": {
-                "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File',' ', variables('scriptFileName'), ' ', parameters('adminEmailAddress'),' ', parameters('adminPassword'),' ', parameters('otcIp'),' ', parameters('sqlDataVolumeSize'))]"      
+                "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File',' ', variables('scriptFileName'), ' ', parameters('adminEmailAddress'),' ', parameters('adminPassword'),' ', parameters('OTCPassword'),' ', parameters('otcIp'),' ', parameters('sqlDataVolumeSize'))]"      
         }
       }
     }

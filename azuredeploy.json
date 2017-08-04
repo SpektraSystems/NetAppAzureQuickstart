@@ -110,6 +110,7 @@
         "netAppOntapCloudTemplateFileName": "netapp-ontap-cloud.json",
         "sqlCustomScriptTemplateFileName": "sql-netappotc-connect.json",
         "sqlVMTemplateFileName": "sql-vm.json",
+        "OTCPassword": "[concat('otc',uniqueString(resourceGroup().id))]",
         "netappOntapCloudLicenseStandard": {
             "type": "object",
             "licenseType": "azure-cot-standard-paygo",
@@ -190,7 +191,7 @@
             "name": "jump-vm",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-09-01",
-            "comments": "Azure Resources that are shared within the infrastructure environment",
+            "comments": "Jump Server deployment",
             "dependsOn": [
                 "['Microsoft.Resources/deployments/shared-resources']"
             ],
@@ -250,7 +251,7 @@
             "name": "sql-vm",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-09-01",
-            "comments": "Azure Resources that are shared within the infrastructure environment",
+            "comments": "SQL Server Deployment",
             "dependsOn": [
                 "['Microsoft.Resources/deployments/shared-resources']"
             ],
@@ -310,7 +311,7 @@
             "name": "netapp-oncommand-cloudmanager",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-09-01",
-            "comments": "Azure Resources that are shared within the infrastructure environment",
+            "comments": "NetApp OnCommand Manager Deployment",
             "dependsOn": [
                 "['Microsoft.Resources/deployments/shared-resources']"
             ],
@@ -387,6 +388,9 @@
                     "adminPassword": {
                         "value": "[parameters('adminPassword')]"
                     },
+                    "OTCPassword": {
+                        "value": "[variables('OTCPassword')]"
+                    },
                     "dataNsgName": {
                         "value": "[variables('dataNsgName')]"
                     },
@@ -450,6 +454,9 @@
                     "adminPassword": {
                         "value": "[parameters('adminPassword')]"
                     },
+                    "OTCPassword": {
+                        "value": "[variables('OTCPassword')]"
+                    },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
                     },
@@ -483,6 +490,10 @@
         "Jump VM FQDN": {
             "type": "string",
             "value": "[reference('jump-vm').outputs.jumpVmDNSLabel.value]"
+        },
+        "NetApp OTC SVM Password": {
+            "type": "string",
+            "value": "[variables('OTCPassword')]"
         }
     }
 }
