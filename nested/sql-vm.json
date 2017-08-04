@@ -153,7 +153,7 @@
                     "autoUpgradeMinorVersion": true,
                     "settings": {
                         "fileUris": [
-                            "https://github.com/SpektraSystems/NetAppAzureQuickstart/raw/new/scripts/NetApp_PowerShell_Toolkit_4.3.0.msi"
+                            "[concat(parameters('_artifactsLocation'),'/scripts/',variables('psToolkitFileName'),parameters('_artifactsLocationSasToken'))]"
                         ],
                         "commandToExecute": "start /wait msiexec.exe /i NetApp_PowerShell_Toolkit_4.3.0.msi /qn ADDLOCAL=F.PSTKDOT"
                     }
