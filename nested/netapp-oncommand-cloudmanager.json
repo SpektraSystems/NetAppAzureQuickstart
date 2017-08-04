@@ -5,7 +5,7 @@
         "adminUserName": {
             "type": "string"
         },
-        "ontpPassword": {
+        "vmPassword": {
             "type": "securestring"
         },
         "webStorageAccountName": {
@@ -137,7 +137,7 @@
                 "osProfile": {
                     "computerName": "[parameters('OnCommandCloudManagerVmName')]",
                     "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('ontpPassword')]"
+                    "adminPassword": "[parameters('vmPassword')]"
                 },
                 "storageProfile": {
                     "imageReference": {
