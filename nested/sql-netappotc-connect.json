@@ -5,7 +5,7 @@
         "adminEmailAddress": {
             "type": "securestring"
         },
-        "ontpPassword": {
+        "otcPassword": {
             "type": "securestring"
         },
         "vmPassword": {
@@ -56,7 +56,7 @@
                 ]
             },
             "protectedSettings": {
-                "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File',' ', variables('scriptFileName'), ' ', parameters('adminEmailAddress'),' ', parameters('vmPassword'),' ', parameters('otcIp'),' ', parameters('sqlDataVolumeSize'))]"
+                "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File',' ', variables('scriptFileName'), ' ', parameters('adminEmailAddress'),' ', parameters('vmPassword'),' ',parameters('otcPassword'),' ', parameters('otcIp'),' ', parameters('sqlDataVolumeSize'))]"
             }
         }
     }]

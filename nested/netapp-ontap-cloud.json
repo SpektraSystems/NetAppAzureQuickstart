@@ -5,7 +5,7 @@
         "adminEmailAddress": {
             "type": "string"
         },
-        "ontpPassword": {
+        "otcPassword": {
             "type": "securestring"
         },
         "dataNsgName": {
@@ -52,7 +52,7 @@
         "subscriptionId": "[subscription().subscriptionId]",
         "azureADTenantID": "[subscription().tenantId]",
         "subnetID": "[concat(parameters('vnetID'),'/subnets/',parameters('dataSubnetName'))]",
-        "encodedPassword": "[base64(parameters('ontpPassword'))]",
+        "encodedPassword": "[base64(parameters('otcPassword'))]",
         "nsgID": "[resourceId('Microsoft.Network/networkSecurityGroups',parameters('dataNSGName'))]",
         "netappOntapCloudLicenseType": "[parameters('netappOntapCloudLicense').licenseType]",
         "netappOntapCloudInstanceType": "[parameters('netappOntapCloudLicense').instanceType]",
