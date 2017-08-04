@@ -80,7 +80,7 @@
     "variables": {
         "webNsgName": "web-nsg",
         "dataNsgName": "data-nsg",
-        "ontpPassword": "[concat('ontap', uniqueString(resourceGroup().id))]",
+        "ontpPassword": "[concat('OnT@p!1', uniqueString(resourceGroup().id))]",
         "webStorageAccountName": "[concat('webst',uniqueString(resourceGroup().id))]",
         "dataStorageAccountName": "[concat('datast',uniqueString(resourceGroup().id))]",
         "jumpStorageAccountName": "[concat('jumpst',uniqueString(resourceGroup().id))]",
@@ -332,8 +332,8 @@
                     "adminUsername": {
                         "value": "[parameters('adminUsername')]"
                     },
-                    "ontpPassword": {
-                        "value": "[variables('ontpPassword')]"
+                    "vmPassword": {
+                        "value": "[parameters('vmPassword')]"
                     },
                     "webStorageAccountName": {
                         "value": "[variables('webStorageAccountName')]"
