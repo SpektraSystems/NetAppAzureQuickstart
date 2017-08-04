@@ -5,7 +5,8 @@
 region=${1}
 otcName=${2}
 adminEmail=${3}
-encodedPassword=${4} 
+encodedadminPassword=${4} 
+encodedOTCPassword=${4} 
 subscriptionId=${5}
 azureTenantId=${6}
 applicationId=${7}
@@ -21,7 +22,9 @@ QuickstartNameTagValue=${16}
 QuickstartProviderTagValue=${17}
 netappOntapVersion=${18}
 
-adminPassword=`echo $encodedPassword| base64 --decode` 
+adminPassword=`echo $encodedadminPassword| base64 --decode` 
+OTCPassword=`echo $encodedOTCPassword| base64 --decode` 
+
 
 ##Variable Values for Setting up OnCommand Manager 
 tenantName="azurenetappqs_tenant"
@@ -72,7 +75,7 @@ sleep 5
 tenantId=`sudo curl http://localhost/occm/api/tenants -X GET --header 'Content-Type:application/json' --header 'Referer:AzureQS' --cookie cookies.txt | jq -r .[0].publicId`
 
 ## Create a ONTAP Cloud working environment on Azure
-curl http://localhost/occm/api/azure/vsa/working-environments -X POST  --header 'Content-Type:application/json' --cookie cookies.txt --data '{ "name": "'${otcName}'", "svmPassword": "'${adminPassword}'",  "vnetId": "'${vnetID}'",   "cidr": "'${cidr}'", "vsaMetadata": { "ontapVersion": "'${netappOntapVersion}'", "licenseType": "'${licenseType}'", "instanceType": "'${instanceType}'" },"tenantId": "'${tenantId}'","region": "'${region}'", "subnetId":"'${subnetID}'", "dataEncryptionType":"NONE", "skipSnapshots": "false", "diskSize": { "size": "1","unit": "TB" }, "storageType": "'${storageType}'", "azureTags": [ { "tagKey" : "provider", "tagValue" : "'${QuickstartProviderTagValue}'"}, { "tagKey" : "quickstartName", "tagValue" : "'${QuickstartNameTagValue}'"}],"writingSpeedState": "NORMAL" }' > /tmp/createnetappotc.txt
+curl http://localhost/occm/api/azure/vsa/working-environments -X POST  --header 'Content-Type:application/json' --cookie cookies.txt --data '{ "name": "'${otcName}'", "svmPassword": "'${OTCPassword}'",  "vnetId": "'${vnetID}'",   "cidr": "'${cidr}'", "vsaMetadata": { "ontapVersion": "'${netappOntapVersion}'", "licenseType": "'${licenseType}'", "instanceType": "'${instanceType}'" },"tenantId": "'${tenantId}'","region": "'${region}'", "subnetId":"'${subnetID}'", "dataEncryptionType":"NONE", "skipSnapshots": "false", "diskSize": { "size": "1","unit": "TB" }, "storageType": "'${storageType}'", "azureTags": [ { "tagKey" : "provider", "tagValue" : "'${QuickstartProviderTagValue}'"}, { "tagKey" : "quickstartName", "tagValue" : "'${QuickstartNameTagValue}'"}],"writingSpeedState": "NORMAL" }' > /tmp/createnetappotc.txt
 
 OtcPublicId=`cat /tmp/createnetappotc.txt | jq -r .publicId`
 if [ ${OtcPublicId} = null ] ; then
