@@ -5,6 +5,8 @@ param(
     [Parameter(Mandatory=$true)]
     [String]$password,
     [Parameter(Mandatory=$true)]
+    [String]$OTCpassword,
+    [Parameter(Mandatory=$true)]
     [String]$ocmip,
     [Parameter(Mandatory=$true)]
     [decimal]$Capacity
@@ -287,7 +289,7 @@ $scriptlogfilepath = 'C:\WindowsAzure\Logs\SQLNetApp_Connect_Storage.ps1.txt'
 
 ## Starting functions execution
 
-$SVMPwd = $password
+$SVMPwd = $OTCpassword
 Get-ONTAPClusterDetails $email $password $ocmip
 Connect-ONTAP $AdminLIF $iScSILIF $SVMName $SVMPwd $Capacity
 Load-SampleDatabase
