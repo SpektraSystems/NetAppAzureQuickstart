@@ -8,9 +8,6 @@
     "adminPassword": {
       "type": "securestring"
     },
-    "OTCPassword": {
-      "type": "securestring"
-    },
     "webStorageAccountName": {
       "type": "string"
     },
