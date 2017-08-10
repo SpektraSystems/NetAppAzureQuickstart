@@ -48,7 +48,7 @@
     "variables": {
         "vmStorageAccountContainerName": "vhds",
         "OSDiskName": "sql-vm-osdisk",
-        "psToolkitFileName": "NetApp_PowerShell_Toolkit_4.3.0.msi"
+        "psToolkitScriptName": "InstallNetAppPS.ps1"
     },
     "resources": [{
             "type": "Microsoft.Storage/storageAccounts",
@@ -153,9 +153,9 @@
                     "autoUpgradeMinorVersion": true,
                     "settings": {
                         "fileUris": [
-                            "[concat(parameters('_artifactsLocation'),'/scripts/',variables('psToolkitFileName'),parameters('_artifactsLocationSasToken'))]"
+                            "[concat(parameters('_artifactsLocation'),'/scripts/',variables('psToolkitScriptName'),parameters('_artifactsLocationSasToken'))]"
                         ],
-                        "commandToExecute": "start /wait msiexec.exe /i NetApp_PowerShell_Toolkit_4.3.0.msi /qn ADDLOCAL=F.PSTKDOT"
+                           "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File',' ', variables('psToolkitScriptName'))]"      
                     }
                 }
             }]
