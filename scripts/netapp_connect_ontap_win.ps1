@@ -285,16 +285,18 @@ $scriptlogfilepath = 'C:\WindowsAzure\Logs\SQLNetApp_Connect_Storage.ps1.txt'
 (get-content $azurelogfilepath) | % { $_ -replace $password, 'passwordremoved' } | set-content $azurelogfilepath
 (get-content $scriptlogfilepath) | % { $_ -replace $password, 'passwordremoved' } | set-content $scriptlogfilepath
 }
-
+function Install-NetAppPSToolkit([String]$password)
+{
+New-Item C:\NetApp -Type Directory
+$WebClient = New-Object System.Net.WebClient
+$WebClient.DownloadFile("https://raw.githubusercontent.com/SpektraSystems/NetAppAzureQuickstart/master/scripts/NetApp_PowerShell_Toolkit_4.3.0.msi","C:\NetApp\NetApp_PowerShell_Toolkit_4.3.0.msi")
+Invoke-Command -ScriptBlock { & cmd /c "msiexec.exe /i C:\NetApp\NetApp_PowerShell_Toolkit_4.3.0.msi" /qn ADDLOCAL=F.PSTKDOT}
+}
 
 ## Starting functions execution
 
 $SVMPwd = $OTCpassword
-New-Item C:\NetApp -Type Directory
-$WebClient = New-Object System.Net.WebClient
-$WebClient.DownloadFile("https://raw.githubusercontent.com/SpektraSystems/NetAppAzureQuickstart/master/scripts/NetApp_PowerShell_Toolkit_4.3.0.msi","C:\NetApp\NetApp_PowerShell_Toolkit_4.3.0.msi")
-# Start-Process msiexec.exe -Wait -ArgumentList '/I C:\NetApp\NetApp_PowerShell_Toolkit_4.3.0.msi /quiet'
-Invoke-Command -ScriptBlock { & cmd /c "msiexec.exe /i C:\NetApp\NetApp_PowerShell_Toolkit_4.3.0.msi" /qn ADDLOCAL=F.PSTKDOT}
+Install-NetAppPSToolkit
 Get-ONTAPClusterDetails $email $password $ocmip
 Connect-ONTAP $AdminLIF $iScSILIF $SVMName $SVMPwd $Capacity
 Load-SampleDatabase
