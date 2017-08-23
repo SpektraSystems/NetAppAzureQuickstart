@@ -68,6 +68,7 @@ until sudo wget http://localhost/occmui > /dev/null 2>&1; do sudo wget http://lo
 sleep 60
 
 ## Authenticate to NetApp OnCommand CloudManager
+sleep 120
 curl http://localhost/occm/api/auth/login --header 'Content-Type:application/json' --header 'Referer:AzureQS1' --data '{"email":"'${adminEmail}'","password":"'${adminPassword}'"}' --cookie-jar cookies.txt
 sleep 5
 
