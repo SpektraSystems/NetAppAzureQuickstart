@@ -154,14 +154,13 @@
                     "settings": {
                         "fileUris": [
                             "[concat(parameters('_artifactsLocation'),'/scripts/',variables('psToolkitScriptName'),parameters('_artifactsLocationSasToken'))]"
-                        ],
-                        },
-                "protectedSettings": {
+                        ]
+                    },
+                    "protectedSettings": {
                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File',' ', variables('psToolkitScriptName'))]"      
                     }
                 }
-                }
-            ]
+            }]
 
         }
 
